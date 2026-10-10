@@ -1,0 +1,2 @@
+# Redirect apex domain to www
+https://mochiii.in/* https://www.mochiii.in/:splat 301!
