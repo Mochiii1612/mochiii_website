@@ -76,6 +76,8 @@
   background: #C2436B; border-radius: 1px; transition: all 0.25s ease; transform: translateX(-50%);
 }
 .nav-link:hover::after { width: 50%; }
+.nav-link.active { color: #C2436B; background: rgba(194,67,107,0.06); }
+.nav-link.active::after { width: 50%; }
 
 /* Solid dark CTA pill — accent color is reserved for emphasis, not buttons */
 .nav-cta {
@@ -362,8 +364,11 @@
 
 /* Footer */
 .footer { padding: 40px 0; border-top: 1px solid var(--glass-border); position: relative; z-index: 5; }
-.footer-content { display: flex; justify-content: space-between; align-items: center; }
+.footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
 .footer-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.9rem; }
+.footer-links { display: flex; gap: 20px; }
+.footer-link { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; transition: color 0.2s; }
+.footer-link:hover { color: var(--accent-primary); }
 .footer-copy { font-size: 0.85rem; color: var(--text-secondary); }
 
 .animate-fade { animation: fadeIn 0.4s ease-in-out; }
