@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://www.mochiii.in/api/mcp/v1/catalog.schema.json",
+  "title": "Mochiii MCP catalog, version 1",
+  "description": "The servers the Mochiii MCP marketplace offers. catalog.json holds the verified tier and points at community.json for the rest. Every entry names a program a user's Mochiii daemon will run with their full privileges once they type its name to confirm; clients re-check every rule below and drop an entry that breaks one.",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "servers"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "url"],
+        "properties": { "id": { "type": "string" }, "name": { "type": "string" }, "url": { "type": "string", "format": "uri" } }
+      }
+    },
+    "community": {
+      "description": "catalog.json only: where the community tier is, relative to this file, and how many entries it holds.",
+      "type": "object",
+      "required": ["path", "count"],
+      "properties": { "path": { "const": "community.json" }, "count": { "type": "integer", "minimum": 0 } }
+    },
+    "servers": { "type": "array", "items": { "$ref": "#/$defs/server" } }
+  },
+  "$defs": {
+    "plain": {
+      "description": "Text with no control characters and no bidirectional overrides.",
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u200e\\u200f\\u202a-\\u202e\\u2066-\\u2069]+$"
+    },
+    "server": {
+      "type": "object",
+      "required": ["id", "name", "description", "publisher", "tier", "categories", "package", "launch", "env"],
+      "properties": {
+        "id": {
+          "description": "The server name Mochiii stores it under and approval prompts show. Same rule as the daemon's.",
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$",
+          "not": { "anyOf": [{ "const": "builtin" }, { "pattern": "__" }] }
+        },
+        "name": { "allOf": [{ "$ref": "#/$defs/plain" }, { "maxLength": 80 }] },
+        "description": { "allOf": [{ "$ref": "#/$defs/plain" }, { "maxLength": 400 }] },
+        "publisher": { "allOf": [{ "$ref": "#/$defs/plain" }, { "maxLength": 80 }] },
+        "namespace": {
+          "description": "The server's name in the official MCP Registry, whose owner the registry verified.",
+          "allOf": [{ "$ref": "#/$defs/plain" }, { "maxLength": 200 }]
+        },
+        "tier": {
+          "description": "verified: chosen and reviewed by Mochiii. community: imported from the MCP Registry, not reviewed.",
+          "enum": ["verified", "community"]
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "enum": ["developer-tools", "docs", "search", "browser", "data", "cloud", "productivity", "communication", "observability", "security", "ai"]
+          }
+        },
+        "homepage": { "type": "string", "pattern": "^https://" },
+        "package": {
+          "type": "object",
+          "required": ["registry", "identifier", "version"],
+          "properties": {
+            "registry": { "enum": ["npm", "pypi", "oci"] },
+            "identifier": { "type": "string", "maxLength": 200, "pattern": "^[A-Za-z0-9@][A-Za-z0-9@/._:+-]*$" },
+            "version": {
+              "description": "An exact version. Never a range or a tag like latest.",
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[0-9A-Za-z][0-9A-Za-z.+_-]*$",
+              "not": { "pattern": "^[Ll][Aa][Tt][Ee][Ss][Tt]$" }
+            },
+            "url": { "type": "string", "pattern": "^https://" }
+          }
+        },
+        "launch": {
+          "description": "Exactly what runs. command is npx for npm, uvx for pypi, docker for oci, and args must begin with the package pinned to its version: npx -y <identifier>@<version> / uvx <identifier>@<version> / docker run -i --rm [-e NAME]... <image:tag>.",
+          "type": "object",
+          "required": ["command", "args"],
+          "properties": {
+            "command": { "enum": ["npx", "uvx", "docker"] },
+            "args": { "type": "array", "maxItems": 32, "items": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[^\\u0000\\n\\r]+$" } }
+          }
+        },
+        "env": {
+          "description": "Variables the server reads, by NAME. A value is never carried: the user sets it in their own environment.",
+          "type": "array",
+          "maxItems": 24,
+          "items": {
+            "type": "object",
+            "required": ["name", "required", "secret"],
+            "not": { "required": ["value"] },
+            "properties": {
+              "name": {
+                "description": "Never OPENROUTER_API_KEY, MOCHIII_API_KEY or MOCHIII_PROXY_KEY, in any case: Mochiii's own credentials are not passed to a server.",
+                "type": "string",
+                "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+              },
+              "required": { "type": "boolean" },
+              "secret": { "type": "boolean" },
+              "description": { "allOf": [{ "$ref": "#/$defs/plain" }, { "maxLength": 300 }] }
+            }
+          }
+        },
+        "cwd": { "description": "Absent: a private folder of its own. workspace: inside the project.", "const": "workspace" }
+      }
+    }
+  }
+}
