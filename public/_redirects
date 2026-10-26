@@ -1,5 +1,8 @@
-# Redirect apex domain to www
-https://mochiii.in/* https://www.mochiii.in/:splat 301!
+# RELATIVE PATHS ONLY. Workers rejects the WHOLE file for one rule with a
+# scheme and host ("Only relative URLs are allowed", code 100324), and nothing
+# deploys: the apex -> www rule that was here stopped every deploy from
+# 2026-10-10. A redirect between hostnames (mochiii.in -> www.mochiii.in) is a
+# Redirect Rule in the Cloudflare dashboard, not a line in this file.
 
 # The app's routes (src/App.tsx), served by the app's page. Anything else with
 # no file behind it is a 404 (wrangler.jsonc) -- above all under /api/, where a
