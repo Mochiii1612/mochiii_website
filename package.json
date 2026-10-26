@@ -5,8 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "node scripts/mcp/check-catalog.mjs && tsc -b && vite build",
     "lint": "oxlint",
+    "mcp:sync": "node scripts/mcp/sync-registry.mjs",
+    "mcp:check": "node scripts/mcp/check-catalog.mjs",
+    "mcp:handshake": "node scripts/mcp/handshake.mjs",
+    "mcp:test": "node --test scripts/mcp/",
     "preview": "vite preview"
   },
   "dependencies": {

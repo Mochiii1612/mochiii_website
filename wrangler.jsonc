@@ -1,0 +1,23 @@
+// www.mochiii.in is a Cloudflare Worker serving dist/ as static assets.
+//
+// WHY THIS FILE EXISTS. Without one, Cloudflare treated the site as a
+// single-page app and answered EVERY path it had no file for with index.html
+// and HTTP 200 -- so /api/mcp/v1/catalog.json, before it was ever deployed,
+// came back as the home page, and the Mochiii extension's marketplace showed
+// an empty list instead of an error. An API path that silently returns a web
+// page hides that it is missing.
+//
+// So a missing file is a 404 here (public/404.html, with status 404), and the
+// app's own routes are rewritten to index.html in public/_redirects. A new
+// route in src/App.tsx needs a line there too, or it 404s on a reload.
+//
+// `name` must be the Worker's name in the Cloudflare dashboard, or Workers
+// Builds refuses to deploy (and offers a PR fixing it).
+{
+  "name": "mochiii-website",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}

@@ -28,6 +28,12 @@ export default function Layout({ children }: LayoutProps) {
             <a href="/#features" className="nav-link">Architecture</a>
             <a href="/#pipeline" className="nav-link">5-Gate Pipeline</a>
             <a href="/#demo" className="nav-link">Live Demo</a>
+            <Link
+              to="/mcp"
+              className={`nav-link ${location.pathname === '/mcp' ? 'active' : ''}`}
+            >
+              MCP Marketplace
+            </Link>
             <Link 
               to="/support" 
               className={`nav-link ${location.pathname === '/support' ? 'active' : ''}`}
@@ -54,6 +60,7 @@ export default function Layout({ children }: LayoutProps) {
             <span>Mochiii Security-First Agentic Suite</span>
           </div>
           <div className="footer-links">
+            <Link to="/mcp" className="footer-link">MCP Marketplace</Link>
             <Link to="/support" className="footer-link">Support</Link>
             <a href="https://github.com/Rav-2007/codeterminal-core" target="_blank" rel="noreferrer" className="footer-link">GitHub</a>
           </div>
