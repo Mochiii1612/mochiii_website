@@ -1,2 +1,12 @@
 # Redirect apex domain to www
 https://mochiii.in/* https://www.mochiii.in/:splat 301!
+
+# The app's routes (src/App.tsx), served by the app's page. Anything else with
+# no file behind it is a 404 (wrangler.jsonc) -- above all under /api/, where a
+# web page in place of JSON hid a catalog that was never deployed. The target
+# is "/", not "/index.html": Cloudflare redirects /index.html to /, so that
+# rewrite would turn /mcp into a redirect to the home page.
+/support / 200
+/support/ / 200
+/mcp / 200
+/mcp/ / 200

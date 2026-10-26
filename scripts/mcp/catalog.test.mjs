@@ -106,3 +106,43 @@ test('an image is pinned by its tag, and a curated env list replaces a token pla
   assert.deepEqual(m.server.launch.args, ['run', '-i', '--rm', '-e', 'GITHUB_PERSONAL_ACCESS_TOKEN', 'ghcr.io/github/github-mcp-server:2.0.2']);
   assert.equal(m.server.package.version, '2.0.2');
 });
+
+// THE BUILD IS THE STRICTEST OF THE THREE VALIDATORS. An entry the extension
+// (clients/vscode/src/mcpCatalog.ts) would drop, or the daemon
+// (daemon/mcpuser.go validateUserServer) would refuse at add, must fail here:
+// otherwise the user sees a shorter list with no reason, or a card whose Add
+// always fails. Each case below was one where the three disagreed (2026-10-26).
+test('what the extension or the daemon would refuse, the build refuses first', () => {
+  const cases = {
+    'a variable name that is a pasted key': (s) => (s.env = [{ name: 'AKIAABCDEFGHIJKLMNOP', required: true, secret: true }]),
+    'a variable name with a long letter-and-digit run': (s) => (s.env = [{ name: 'TOKEN_abcdef1234567890XY', required: true, secret: true }]),
+    'a variable name past 128 characters': (s) => (s.env = [{ name: 'A'.repeat(129), required: false, secret: false }]),
+    "Mochiii's own credential in an argument template": (s) => s.launch.args.push('--key', '${OPENROUTER_API_KEY:-x}'),
+    'more than 10 categories': (s) => (s.categories = ['developer-tools', 'docs', 'search', 'browser', 'data', 'cloud', 'productivity', 'communication', 'observability', 'security', 'ai']),
+    'an empty namespace': (s) => (s.namespace = ''),
+    'an empty variable description': (s) => (s.env = [{ name: 'X_TOKEN', required: false, secret: true, description: '' }]),
+  };
+  for (const [label, change] of Object.entries(cases)) {
+    const s = good();
+    change(s);
+    assert.notDeepEqual(validateServer(s), [], label);
+  }
+  const templated = good();
+  templated.launch.args.push('--db', '${DATABASE_URL}');
+  assert.deepEqual(validateServer(templated), [], 'a template naming a variable of its own is fine');
+});
+
+test('a verified pin is whatever curated.json says, with its arguments and folder', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const curated = JSON.parse(await readFile(new URL('../../mcp/curated.json', import.meta.url), 'utf8')).servers;
+  const catalog = JSON.parse(await readFile(new URL('../../public/api/mcp/v1/catalog.json', import.meta.url), 'utf8')).servers;
+  assert.equal(catalog.length, curated.length);
+  for (const c of curated) {
+    const s = catalog.find((x) => x.id === c.id);
+    assert.ok(s, c.id);
+    assert.equal(s.package.version, c.package.version, c.id);
+    const extra = c.args ?? [];
+    assert.deepEqual(s.launch.args.slice(s.launch.args.length - extra.length), extra, c.id);
+    assert.equal(s.cwd, c.cwd, c.id);
+  }
+});

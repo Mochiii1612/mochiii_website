@@ -1,52 +1,62 @@
 {
   "//": [
-    "THE VERIFIED TIER of the Mochiii MCP marketplace. Each entry here was chosen by a person: an official",
-    "server from the vendor itself, published in the official MCP Registry under the vendor's own verified",
-    "namespace (registryName), or -- where the registry does not list it -- one of the MCP project's own",
-    "reference servers (manual). Everything else in the catalog is community tier: imported, not reviewed.",
+    "THE VERIFIED TIER of the Mochiii MCP marketplace: servers someone writing code in the editor would use --",
+    "files, git, GitHub, databases, a browser, docs -- not connectors to SaaS accounts. Each entry was chosen by",
+    "a person and is pinned here, in full, by a person: the package, its exact version (an OCI image by its",
+    "digest, since a tag can be moved), the arguments after it, and the variables it reads. `npm run mcp:sync`",
+    "does NOT move these pins; it only rebuilds the community tier and says when the registry has a newer",
+    "version of a verified server. A bump is an edit to this file, then `npm run mcp:handshake`, which starts",
+    "the new pin and records its tools/list -- the build refuses a verified entry with no passing record.",
     "",
-    "Fields here OVERRIDE what the registry says. `env` replaces the registry's variables where it hands a",
-    "credential over as a value typed into the command line (GitHub, Terraform) or does not declare the one",
-    "the server needs (Perplexity): Mochiii passes variables by NAME only. Versions come from the registry at",
-    "each `npm run mcp:sync`, so every bump of a verified server is a line in that commit's diff.",
+    "`namespace` is the server's name in the official MCP Registry, where the registry lists it; the MCP",
+    "project's own reference servers (filesystem, git, fetch, memory, sequential-thinking) are not there.",
     "",
-    "Left out on purpose: servers whose job Mochiii's own confined tools already do (filesystem, git, fetch)",
-    "-- an unconfined copy of a confined tool is all risk and no gain -- and official servers that turn on",
-    "write access by default (PagerDuty pins --enable-write-tools) or cannot be pinned (SonarQube's image",
-    "has no tag). Those still appear in the community tier with exactly what they run."
+    "`env` lists variables by NAME only: Mochiii passes them through, never stores a value in a catalog.",
+    "`cwd: workspace` starts the server in the project; without it a server gets a private folder of its own.",
+    "",
+    "Filesystem, git and fetch overlap Mochiii's own confined tools. They were left out until 2026-10-26 and",
+    "are offered now because people ask for them by name; the add flow still makes the user acknowledge that",
+    "the server runs unconfined, and filesystem and git start in the project only. postgres and sqlite are Google's MCP Toolbox for Databases: the MCP project's",
+    "own postgres server is deprecated on npm and had a read-only bypass, and its sqlite server is archived."
   ],
   "servers": [
     {
-      "id": "context7",
-      "registryName": "io.github.upstash/context7",
-      "name": "Context7",
-      "publisher": "Upstash",
-      "categories": ["docs", "developer-tools"],
-      "description": "Up-to-date, version-specific documentation and code examples for libraries, pulled into the model's context on request."
+      "id": "filesystem",
+      "name": "Filesystem",
+      "publisher": "Model Context Protocol",
+      "categories": ["developer-tools"],
+      "homepage": "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
+      "description": "Read, write, move and search files in the open project, from the MCP reference servers. Reaches only the project folder it starts in.",
+      "package": { "registry": "npm", "identifier": "@modelcontextprotocol/server-filesystem", "version": "1.0.0" },
+      "args": ["."],
+      "cwd": "workspace",
+      "env": []
     },
     {
-      "id": "playwright",
-      "registryName": "io.github.microsoft/playwright-mcp",
-      "name": "Playwright",
-      "publisher": "Microsoft",
-      "categories": ["browser"],
-      "description": "Drive a real browser with Playwright: navigate, click, fill forms and read pages through the accessibility tree."
-    },
-    {
-      "id": "chrome-devtools",
-      "registryName": "io.github.ChromeDevTools/chrome-devtools-mcp",
-      "name": "Chrome DevTools",
-      "publisher": "Google Chrome DevTools",
-      "categories": ["browser", "developer-tools"],
-      "description": "Inspect and debug a live Chrome: network requests, console, performance traces and DOM, from the Chrome DevTools team."
+      "id": "git",
+      "name": "Git",
+      "publisher": "Model Context Protocol",
+      "categories": ["developer-tools"],
+      "homepage": "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
+      "description": "Status, diff, log, branches and commits in the project's Git repository, from the MCP reference servers.",
+      "package": { "registry": "pypi", "identifier": "mcp-server-git", "version": "2026.10.19" },
+      "args": ["--repository", "."],
+      "cwd": "workspace",
+      "env": []
     },
     {
       "id": "github",
-      "registryName": "io.github.github/github-mcp-server",
       "name": "GitHub",
       "publisher": "GitHub",
+      "namespace": "io.github.github/github-mcp-server",
       "categories": ["developer-tools"],
+      "homepage": "https://github.com/github/github-mcp-server",
       "description": "GitHub's official server: repositories, issues, pull requests, code search and Actions, through your own token.",
+      "package": {
+        "registry": "oci",
+        "identifier": "ghcr.io/github/github-mcp-server@sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132",
+        "version": "2.0.3"
+      },
       "env": [
         {
           "name": "GITHUB_PERSONAL_ACCESS_TOKEN",
@@ -57,133 +67,167 @@
       ]
     },
     {
-      "id": "brave-search",
-      "registryName": "io.github.brave/brave-search-mcp-server",
-      "name": "Brave Search",
-      "publisher": "Brave",
-      "categories": ["search"],
-      "description": "Web, news, image and local search through the Brave Search API."
-    },
-    {
-      "id": "tavily",
-      "registryName": "io.github.tavily-ai/tavily-mcp",
-      "name": "Tavily",
-      "publisher": "Tavily",
-      "categories": ["search"],
-      "description": "Web search, extraction and crawling built for AI agents, through the Tavily API."
-    },
-    {
-      "id": "firecrawl",
-      "registryName": "io.github.firecrawl/firecrawl-mcp-server",
-      "name": "Firecrawl",
-      "publisher": "Firecrawl",
-      "categories": ["search", "browser"],
-      "description": "Scrape, crawl and search the web into clean markdown, through the Firecrawl API.",
-      "homepage": "https://github.com/firecrawl/firecrawl-mcp-server"
-    },
-    {
-      "id": "perplexity",
-      "registryName": "ai.perplexity/mcp-server",
-      "name": "Perplexity",
-      "publisher": "Perplexity",
-      "categories": ["search", "ai"],
-      "description": "Real-time web search, reasoning and research through Perplexity's API.",
-      "homepage": "https://github.com/perplexityai/modelcontextprotocol",
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "publisher": "Google",
+      "namespace": "io.github.googleapis/mcp-toolbox",
+      "categories": ["data"],
+      "homepage": "https://github.com/googleapis/mcp-toolbox",
+      "description": "Run SQL against a PostgreSQL database and inspect its schema, tables and indexes. Google's MCP Toolbox for Databases, with its prebuilt PostgreSQL tools.",
+      "package": { "registry": "npm", "identifier": "@toolbox-sdk/server", "version": "1.15.0" },
+      "args": ["--prebuilt", "postgres", "--stdio"],
       "env": [
-        {
-          "name": "PERPLEXITY_API_KEY",
-          "required": true,
-          "secret": true,
-          "description": "Your Perplexity API key."
-        }
+        { "name": "POSTGRES_HOST", "required": true, "secret": false, "description": "The database host, e.g. localhost." },
+        { "name": "POSTGRES_PORT", "required": true, "secret": false, "description": "The database port, usually 5432." },
+        { "name": "POSTGRES_DATABASE", "required": true, "secret": false, "description": "The database to connect to." },
+        { "name": "POSTGRES_USER", "required": true, "secret": false, "description": "The user to connect as. A read-only role is the safe choice." },
+        { "name": "POSTGRES_PASSWORD", "required": true, "secret": true, "description": "That user's password." }
       ]
     },
     {
-      "id": "sentry",
-      "registryName": "io.github.getsentry/sentry-mcp",
-      "name": "Sentry",
-      "publisher": "Sentry",
-      "categories": ["observability"],
-      "description": "Sentry issues, errors, traces and releases, for debugging with the stack trace in front of the model."
-    },
-    {
-      "id": "grafana",
-      "registryName": "io.github.grafana/mcp-grafana",
-      "name": "Grafana",
-      "publisher": "Grafana Labs",
-      "categories": ["observability"],
-      "description": "Search dashboards, query data sources and read alerts and incidents in your Grafana instance.",
+      "id": "sqlite",
+      "name": "SQLite",
+      "publisher": "Google",
+      "namespace": "io.github.googleapis/mcp-toolbox",
+      "categories": ["data"],
+      "homepage": "https://github.com/googleapis/mcp-toolbox",
+      "description": "Query a SQLite database file and inspect its tables. Google's MCP Toolbox for Databases, with its prebuilt SQLite tools, started in the project.",
+      "package": { "registry": "npm", "identifier": "@toolbox-sdk/server", "version": "1.15.0" },
+      "args": ["--prebuilt", "sqlite", "--stdio"],
+      "cwd": "workspace",
       "env": [
-        {
-          "name": "GRAFANA_URL",
-          "required": true,
-          "secret": false,
-          "description": "The URL of your Grafana instance."
-        },
-        {
-          "name": "GRAFANA_SERVICE_ACCOUNT_TOKEN",
-          "required": true,
-          "secret": true,
-          "description": "A Grafana service account token."
-        }
+        { "name": "SQLITE_DATABASE", "required": true, "secret": false, "description": "Path to the database file, relative to the project or absolute." }
       ]
     },
     {
-      "id": "supabase",
-      "registryName": "com.supabase/mcp",
-      "name": "Supabase",
-      "publisher": "Supabase",
-      "categories": ["data", "cloud"],
-      "description": "Manage Supabase projects: tables, SQL, migrations, edge functions and logs."
+      "id": "playwright",
+      "name": "Playwright",
+      "publisher": "Microsoft",
+      "namespace": "io.github.microsoft/playwright-mcp",
+      "categories": ["browser", "developer-tools"],
+      "homepage": "https://github.com/microsoft/playwright-mcp",
+      "description": "Drive a real browser with Playwright: navigate, click, fill forms and read pages through the accessibility tree.",
+      "package": { "registry": "npm", "identifier": "@playwright/mcp", "version": "0.0.82" },
+      "env": []
+    },
+    {
+      "id": "chrome-devtools",
+      "name": "Chrome DevTools",
+      "publisher": "Google Chrome DevTools",
+      "namespace": "io.github.ChromeDevTools/chrome-devtools-mcp",
+      "categories": ["browser", "developer-tools"],
+      "homepage": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+      "description": "Inspect and debug a live Chrome: network requests, console, performance traces and DOM, from the Chrome DevTools team.",
+      "package": { "registry": "npm", "identifier": "chrome-devtools-mcp", "version": "1.12.0" },
+      "env": []
+    },
+    {
+      "id": "fetch",
+      "name": "Fetch",
+      "publisher": "Model Context Protocol",
+      "categories": ["docs", "developer-tools"],
+      "homepage": "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch",
+      "description": "Fetch a web page or API response and hand it to the model as Markdown, from the MCP reference servers. It can reach any URL your machine can, local ones included.",
+      "package": { "registry": "pypi", "identifier": "mcp-server-fetch", "version": "2026.10.24" },
+      "env": []
+    },
+    {
+      "id": "context7",
+      "name": "Context7",
+      "publisher": "Upstash",
+      "namespace": "io.github.upstash/context7",
+      "categories": ["docs", "developer-tools"],
+      "homepage": "https://context7.com",
+      "description": "Up-to-date, version-specific documentation and code examples for libraries, pulled into the model's context on request.",
+      "package": { "registry": "npm", "identifier": "@upstash/context7-mcp", "version": "4.4.4" },
+      "env": [
+        { "name": "CONTEXT7_API_KEY", "required": false, "secret": true, "description": "A Context7 API key, for higher rate limits. It works without one." }
+      ]
+    },
+    {
+      "id": "eslint",
+      "name": "ESLint",
+      "publisher": "ESLint",
+      "categories": ["developer-tools"],
+      "homepage": "https://eslint.org/docs/latest/use/mcp",
+      "description": "Lint files in the project with its own ESLint configuration and explain the problems found. The ESLint team's official server.",
+      "package": { "registry": "npm", "identifier": "@eslint/mcp", "version": "0.3.15" },
+      "cwd": "workspace",
+      "env": []
+    },
+    {
+      "id": "next-devtools",
+      "name": "Next.js DevTools",
+      "publisher": "Vercel",
+      "namespace": "io.github.vercel/next-devtools-mcp",
+      "categories": ["developer-tools", "docs"],
+      "homepage": "https://github.com/vercel/next-devtools-mcp",
+      "description": "Next.js documentation, upgrade guides and a running dev server's errors and routes, from the Next.js team.",
+      "package": { "registry": "npm", "identifier": "next-devtools-mcp", "version": "0.3.6" },
+      "cwd": "workspace",
+      "env": []
+    },
+    {
+      "id": "nx",
+      "name": "Nx",
+      "publisher": "Nx",
+      "namespace": "io.github.nrwl/nx-mcp",
+      "categories": ["developer-tools"],
+      "homepage": "https://github.com/nrwl/nx-console",
+      "description": "Understand an Nx monorepo: its projects, their dependencies, targets and generators, and the Nx docs. From the Nx team.",
+      "package": { "registry": "npm", "identifier": "nx-mcp", "version": "0.25.0" },
+      "args": ["."],
+      "cwd": "workspace",
+      "env": []
     },
     {
       "id": "mongodb",
-      "registryName": "io.github.mongodb-js/mongodb-mcp-server",
       "name": "MongoDB",
       "publisher": "MongoDB",
+      "namespace": "io.github.mongodb-js/mongodb-mcp-server",
       "categories": ["data"],
-      "description": "Query and manage a MongoDB database: collections, documents, indexes and aggregations.",
+      "homepage": "https://github.com/mongodb-js/mongodb-mcp-server",
+      "description": "Query and manage a MongoDB database: collections, documents, indexes and aggregations. MongoDB's official server.",
+      "package": { "registry": "npm", "identifier": "mongodb-mcp-server", "version": "2.1.0" },
       "env": [
         {
           "name": "MDB_MCP_CONNECTION_STRING",
-          "required": true,
+          "required": false,
           "secret": true,
-          "description": "The connection string of the database to work with."
-        }
+          "description": "The connection string of the database to work with. Without it, the model has to be given one with the connect tool."
+        },
+        { "name": "MDB_MCP_READ_ONLY", "required": false, "secret": false, "description": "Set to true to allow only reads." }
       ]
     },
     {
       "id": "redis",
-      "registryName": "io.github.redis/mcp-redis",
       "name": "Redis",
       "publisher": "Redis",
+      "namespace": "io.github.redis/mcp-redis",
       "categories": ["data"],
-      "description": "Read, write and search data in Redis in natural language, from Redis's official server.",
-      "homepage": "https://github.com/redis/mcp-redis"
-    },
-    {
-      "id": "kubernetes",
-      "registryName": "io.github.containers/kubernetes-mcp-server",
-      "name": "Kubernetes",
-      "publisher": "containers",
-      "categories": ["cloud"],
-      "description": "Work with Kubernetes and OpenShift clusters through your kubeconfig: pods, deployments, logs and resources.",
+      "homepage": "https://github.com/redis/mcp-redis",
+      "description": "Read, write and search data in Redis, from Redis's official server. Connects to localhost:6379 unless told otherwise.",
+      "package": { "registry": "pypi", "identifier": "redis-mcp-server", "version": "0.5.1" },
       "env": [
-        {
-          "name": "KUBECONFIG",
-          "required": false,
-          "secret": false,
-          "description": "The kubeconfig to use, if not ~/.kube/config."
-        }
+        { "name": "REDIS_HOST", "required": false, "secret": false, "description": "The Redis host, if not localhost." },
+        { "name": "REDIS_PORT", "required": false, "secret": false, "description": "The Redis port, if not 6379." },
+        { "name": "REDIS_USERNAME", "required": false, "secret": false, "description": "The user to connect as, if any." },
+        { "name": "REDIS_PWD", "required": false, "secret": true, "description": "The password, if any." }
       ]
     },
     {
       "id": "terraform",
-      "registryName": "io.github.hashicorp/terraform-mcp-server",
       "name": "Terraform",
       "publisher": "HashiCorp",
-      "categories": ["cloud"],
-      "description": "Terraform Registry providers, modules and policies, and HCP Terraform workspaces. Runs Terraform operations only if you enable them yourself.",
+      "namespace": "io.github.hashicorp/terraform-mcp-server",
+      "categories": ["developer-tools", "docs"],
+      "homepage": "https://github.com/hashicorp/terraform-mcp-server",
+      "description": "Terraform Registry providers, modules and policies, for writing accurate Terraform, and HCP Terraform workspaces with a token. Runs Terraform operations only if you enable them yourself.",
+      "package": {
+        "registry": "oci",
+        "identifier": "docker.io/hashicorp/terraform-mcp-server@sha256:11dd418bba6003dd5777e9d0979b68de59929a155b355f338f407947e00e9d80",
+        "version": "1.4.1"
+      },
       "env": [
         {
           "name": "TFE_TOKEN",
@@ -191,88 +235,35 @@
           "secret": true,
           "description": "An HCP Terraform or Terraform Enterprise token, for workspace tools. Registry lookups work without it."
         },
-        {
-          "name": "TFE_ADDRESS",
-          "required": false,
-          "secret": false,
-          "description": "Your Terraform Enterprise URL, if you do not use HCP Terraform."
-        }
+        { "name": "TFE_ADDRESS", "required": false, "secret": false, "description": "Your Terraform Enterprise URL, if you do not use HCP Terraform." }
       ]
-    },
-    {
-      "id": "azure",
-      "registryName": "com.microsoft/azure",
-      "name": "Azure",
-      "publisher": "Microsoft",
-      "categories": ["cloud"],
-      "description": "Azure services from one server: storage, databases, monitoring, resource groups and more, as your signed-in Azure identity."
-    },
-    {
-      "id": "snyk",
-      "registryName": "io.snyk/mcp",
-      "name": "Snyk",
-      "publisher": "Snyk",
-      "categories": ["security", "developer-tools"],
-      "description": "Find and fix vulnerabilities in code, dependencies, containers and infrastructure-as-code with the Snyk CLI.",
-      "env": [
-        {
-          "name": "SNYK_TOKEN",
-          "required": false,
-          "secret": true,
-          "description": "A Snyk API token. Without it, run `snyk auth` once."
-        }
-      ]
-    },
-    {
-      "id": "browserbase",
-      "registryName": "io.github.browserbase/mcp-server-browserbase",
-      "name": "Browserbase",
-      "publisher": "Browserbase",
-      "categories": ["browser"],
-      "description": "Browser automation in Browserbase's cloud browsers, driven by Stagehand."
     },
     {
       "id": "memory",
-      "manual": {
-        "package": { "registry": "npm", "identifier": "@modelcontextprotocol/server-memory", "version": "1.0.0" },
-        "env": [
-          {
-            "name": "MEMORY_FILE_PATH",
-            "required": false,
-            "secret": false,
-            "description": "Where to keep the knowledge graph. Set it, or the graph may not outlive a package cache clean."
-          }
-        ]
-      },
       "name": "Memory",
       "publisher": "Model Context Protocol",
       "categories": ["ai"],
-      "description": "A persistent knowledge graph the model can write to and recall from across conversations. An MCP reference server.",
-      "homepage": "https://github.com/modelcontextprotocol/servers/tree/main/src/memory"
+      "homepage": "https://github.com/modelcontextprotocol/servers/tree/main/src/memory",
+      "description": "A persistent knowledge graph the model can write to and recall from across conversations: decisions, conventions, what a module is for. An MCP reference server.",
+      "package": { "registry": "npm", "identifier": "@modelcontextprotocol/server-memory", "version": "1.0.0" },
+      "env": [
+        {
+          "name": "MEMORY_FILE_PATH",
+          "required": false,
+          "secret": false,
+          "description": "Where to keep the knowledge graph. Set it, or the graph may not outlive a package cache clean."
+        }
+      ]
     },
     {
       "id": "sequential-thinking",
-      "manual": {
-        "package": { "registry": "npm", "identifier": "@modelcontextprotocol/server-sequential-thinking", "version": "1.0.0" },
-        "env": []
-      },
       "name": "Sequential Thinking",
       "publisher": "Model Context Protocol",
       "categories": ["ai"],
+      "homepage": "https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking",
       "description": "A structured tool for step-by-step problem solving that can revise and branch its own reasoning. An MCP reference server.",
-      "homepage": "https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking"
-    },
-    {
-      "id": "time",
-      "manual": {
-        "package": { "registry": "pypi", "identifier": "mcp-server-time", "version": "2026.10.10" },
-        "env": []
-      },
-      "name": "Time",
-      "publisher": "Model Context Protocol",
-      "categories": ["productivity"],
-      "description": "The current time in any timezone, and conversions between timezones. An MCP reference server.",
-      "homepage": "https://github.com/modelcontextprotocol/servers/tree/main/src/time"
+      "package": { "registry": "npm", "identifier": "@modelcontextprotocol/server-sequential-thinking", "version": "1.0.0" },
+      "env": []
     }
   ]
 }

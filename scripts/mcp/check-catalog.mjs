@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 // Fails the build when the committed MCP catalog breaks a rule in
-// catalog-rules.mjs. Runs first in `npm run build`, which is what Vercel runs,
-// so a catalog that would offer an install the daemon refuses -- or one that
-// carries a value where only a name belongs -- never deploys.
+// catalog-rules.mjs, or lists a verified server nobody has started. Runs first
+// in `npm run build`, which is what Cloudflare runs, so a catalog that would
+// offer an install the daemon refuses -- or one that carries a value where only
+// a name belongs, or a verified pin with no passing handshake -- never deploys.
 
 import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { COMMUNITY_FILE, validateCatalog } from './catalog-rules.mjs';
+import { HANDSHAKES, launchKey } from './handshake.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DIR = resolve(ROOT, 'public', 'api', 'mcp', 'v1');
@@ -33,6 +35,20 @@ if (doc.community) {
     errs.push(`catalog.json says ${doc.community.count} community servers; ${COMMUNITY_FILE} holds ${communityCount}`);
 }
 if (!doc.servers?.length) errs.push('there are no verified servers; the marketplace opens on that list');
+
+// "Verified" is a claim that this exact launch line was started and listed its
+// tools (scripts/mcp/handshake.mjs). A new pin without a new record fails here.
+let handshakes = {};
+try {
+  handshakes = JSON.parse(await readFile(HANDSHAKES, 'utf8')).servers ?? {};
+} catch {
+  // missing: every verified entry is reported below
+}
+for (const s of doc.servers ?? []) {
+  const h = handshakes[s.id];
+  if (!h || !h.ok || h.launch !== launchKey(s))
+    errs.push(`${s.id}: no passing handshake for ${s.launch.command} ${s.launch.args.join(' ')}; run npm run mcp:handshake -- ${s.id}`);
+}
 if (errs.length) {
   console.error(`mcp catalog: ${errs.length} problem(s):\n${errs.slice(0, 40).join('\n')}`);
   process.exit(1);

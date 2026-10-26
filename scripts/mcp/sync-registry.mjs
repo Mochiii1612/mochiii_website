@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Rebuilds public/api/mcp/v1/catalog.json: the servers in mcp/curated.json
-// (tier "verified"), then every other server in the official MCP Registry that
+// (tier "verified", exactly as pinned there), then every other server in the official MCP Registry that
 // Mochiii can launch as it stands (tier "community").
 //
 //   npm run mcp:sync                          # fetch the registry and rebuild
@@ -212,25 +212,31 @@ export function fromRegistry(entry, opts = {}) {
   };
 }
 
-// manualServer is a verified entry the registry does not list -- the MCP
-// project's own reference servers, for one. Everything about it is in
-// curated.json, and it is checked by the same rules as the rest.
-function manualServer(c) {
-  const pkg = { ...c.manual.package };
-  const env = c.manual.env ?? [];
+// curatedServer is a verified entry, exactly as curated.json pins it: the
+// package and version a person chose and started (npm run mcp:handshake), the
+// arguments after it, the variables it reads. Nothing here comes from the
+// registry -- a sync that moved a verified pin would ship a version nobody
+// had tried. The registry only says, below, when a newer version exists.
+function curatedServer(c) {
+  const pkg = { ...c.package };
+  const env = c.env ?? [];
   const launch = expectedLaunch(pkg, env);
+  if (!launch) throw new Error(`curated ${c.id}: package.registry ${pkg.registry} is not one Mochiii launches`);
+  launch.args.push(...(c.args ?? []));
   const url = packageUrl(pkg);
   return {
     id: c.id,
     name: c.name,
     description: c.description,
     publisher: c.publisher,
+    ...(c.namespace ? { namespace: c.namespace } : {}),
     tier: 'verified',
     categories: c.categories ?? [],
     ...(c.homepage ? { homepage: c.homepage } : {}),
     package: { ...pkg, ...(url ? { url } : {}) },
     launch,
     env,
+    ...(c.cwd ? { cwd: c.cwd } : {}),
   };
 }
 
@@ -265,35 +271,20 @@ async function main() {
 
   const taken = new Set();
   const out = [];
-  const problems = [];
+  const newer = [];
   for (const c of curated) {
-    const { registryName, manual, env, ...overrides } = c;
-    let base;
-    if (manual) {
-      base = manualServer(c);
-    } else {
-      const entry = byName.get(registryName);
-      if (!entry) {
-        problems.push(`curated ${c.id}: ${registryName} is not in the registry`);
-        continue;
-      }
-      const mapped = fromRegistry(entry, env ? { env } : {});
-      if (mapped.skip) {
-        problems.push(`curated ${c.id}: ${registryName} cannot be offered: ${mapped.skip}`);
-        continue;
-      }
-      base = mapped.server;
-    }
-    const server = { ...base, ...overrides, tier: 'verified' };
+    const server = curatedServer(c);
     taken.add(server.id);
     out.push(server);
+    const latest = c.namespace ? byName.get(c.namespace)?.server?.version : undefined;
+    if (latest && latest !== c.package.version) newer.push(`  ${c.id}: pinned at ${c.package.version}, the registry has ${latest}`);
   }
-  if (problems.length) {
-    console.error(problems.join('\n'));
-    process.exit(1);
+  if (newer.length) {
+    console.log('verified servers with a newer version in the registry (bump in mcp/curated.json, then npm run mcp:handshake):');
+    console.log(newer.join('\n'));
   }
 
-  const curatedNames = new Set(curated.map((c) => c.registryName).filter(Boolean));
+  const curatedNames = new Set(curated.map((c) => c.namespace).filter(Boolean));
   const verifiedPackages = new Set(out.map((s) => `${s.package.registry}:${s.package.identifier}`));
   const skipped = new Map();
   const skip = (reason) => skipped.set(reason, (skipped.get(reason) ?? 0) + 1);

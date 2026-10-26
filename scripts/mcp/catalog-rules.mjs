@@ -50,6 +50,8 @@ const MAX_PUBLISHER = 80;
 const MAX_ARGS = 32;
 const MAX_ARG = 512;
 const MAX_ENV = 24;
+const MAX_ENV_NAME = 128; // clients/vscode/src/mcpCatalog.ts validEnvName, daemon mcpEnvNamePattern
+const MAX_CATEGORIES = 10; // clients/vscode/src/mcpCatalog.ts checkServer
 
 // C0/C1 controls, and the bidi overrides and isolates that let text display in
 // an order other than the one it is stored in. Either can make a description
@@ -84,9 +86,25 @@ export function validServerId(id) {
 export function validEnvName(name) {
   return (
     typeof name === 'string' &&
+    name.length <= MAX_ENV_NAME &&
     /^[A-Za-z_][A-Za-z0-9_]*$/.test(name) &&
-    !FORBIDDEN_ENV_NAMES.some((f) => f.toLowerCase() === name.toLowerCase())
+    !FORBIDDEN_ENV_NAMES.some((f) => f.toLowerCase() === name.toLowerCase()) &&
+    !looksLikeKey(name)
   );
+}
+
+// looksLikeKey is daemon/mcpenv.go envNameLooksLikeKey: a "name" that is more
+// likely a pasted key. The daemon refuses it at add, so an entry carrying one
+// would be a card whose Add always fails.
+export function looksLikeKey(name) {
+  if (/^(sbp_|gh[pousr]_|github_pat_|glpat_|sk_live_|sk_test_|rk_live_|pk_live_|AKIA[0-9A-Z]{12})/.test(name)) return true;
+  return (name.match(/[A-Za-z0-9]{16,}/g) ?? []).some((run) => /[0-9]/.test(run) && /[A-Za-z]/.test(run));
+}
+
+// templateVars is daemon/mcpexpand.go templateVars: the ${VAR} (or
+// ${VAR:-default}) references in an argument, which the daemon expands.
+export function templateVars(text) {
+  return [...text.matchAll(/\$\{([A-Za-z_][A-Za-z0-9_]*)(:-([^}]*))?\}/g)].map((m) => m[1]);
 }
 
 // An exact version: no range, no tag. "latest" would let whoever publishes the
@@ -143,10 +161,11 @@ export function validateServer(s) {
     at(`description must be 1-${MAX_DESCRIPTION} plain characters`);
   if (!isSafeText(s.publisher) || !s.publisher || s.publisher.length > MAX_PUBLISHER)
     at(`publisher must be 1-${MAX_PUBLISHER} plain characters`);
-  if (s.namespace !== undefined && (!isSafeText(s.namespace) || s.namespace.length > 200)) at('namespace is not plain text');
+  if (s.namespace !== undefined && (!isSafeText(s.namespace) || !s.namespace || s.namespace.length > 200))
+    at('namespace must be 1-200 plain characters');
   if (!TIERS.includes(s.tier)) at(`tier must be one of ${TIERS.join(', ')}`);
-  if (!Array.isArray(s.categories) || s.categories.some((c) => !CATEGORIES.includes(c)))
-    at(`categories must come from: ${CATEGORIES.join(', ')}`);
+  if (!Array.isArray(s.categories) || s.categories.length > MAX_CATEGORIES || s.categories.some((c) => !CATEGORIES.includes(c)))
+    at(`categories must be at most ${MAX_CATEGORIES}, from: ${CATEGORIES.join(', ')}`);
   if (s.homepage !== undefined && !httpsUrl(s.homepage)) at('homepage must be an https URL');
 
   const pkg = s.package;
@@ -169,7 +188,7 @@ export function validateServer(s) {
       else if (seen.has(e.name)) at(`env name ${e.name} is listed twice`);
       else seen.add(e.name);
       if (typeof e?.required !== 'boolean' || typeof e?.secret !== 'boolean') at(`env ${e?.name}: required and secret must be booleans`);
-      if (e?.description !== undefined && (!isSafeText(e.description) || e.description.length > 300))
+      if (e?.description !== undefined && (!isSafeText(e.description) || !e.description || e.description.length > 300))
         at(`env ${e?.name}: description is not plain text`);
       if ('value' in (e ?? {})) at(`env ${e?.name}: a catalog never carries a value, only a name`);
     }
@@ -183,6 +202,10 @@ export function validateServer(s) {
     for (const a of launch.args) {
       // oxlint-disable-next-line no-control-regex -- a NUL or newline in an argument is refused, not matched by accident
       if (typeof a !== 'string' || !a || a.length > MAX_ARG || /[\u0000\n\r]/.test(a)) at('launch has an argument no program takes');
+      // daemon/mcpexpand.go validateTemplates: ${OPENROUTER_API_KEY} in an
+      // argument would hand the server Mochiii's own credential; refused at add.
+      else if (templateVars(a).some((v) => FORBIDDEN_ENV_NAMES.some((f) => f.toLowerCase() === v.toLowerCase())))
+        at('launch names one of Mochiii\'s own credentials in a ${...} template');
     }
     const want = Array.isArray(env) ? expectedLaunch(pkg, env) : null;
     if (want) {
