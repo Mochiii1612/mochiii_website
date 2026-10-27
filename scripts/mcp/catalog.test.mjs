@@ -3,7 +3,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { validateServer, validateCatalog } from './catalog-rules.mjs';
+import { validateServer, validateCatalog, validIconSlug } from './catalog-rules.mjs';
 import { fromRegistry } from './sync-registry.mjs';
 
 const good = () => ({
@@ -63,6 +63,57 @@ test('the launch line must be the one the package names', () => {
 test('text that displays differently from what it holds is refused', () => {
   assert.notDeepEqual(validateServer({ ...good(), description: 'safe ‮dlrow' }), []);
   assert.notDeepEqual(validateServer({ ...good(), name: 'line\nbreak' }), []);
+});
+
+const ICON_ACCEPTED = [
+  'github',
+  'chrome-devtools',
+  'a',
+  'x1',
+  '0',
+  'a--b',
+  'x'.repeat(32),
+];
+
+const ICON_REFUSED = [
+  '',
+  'x'.repeat(33),
+  'GitHub',
+  'git_hub',
+  'git hub',
+  'https://example.com/github.svg',
+  '//evil.example/a',
+  '../github',
+  'a/b',
+  'github.svg',
+  'a\n',
+  '%2e%2e',
+  'ｇithub', // the first letter is a FULL-WIDTH g; keep it exactly
+  null,
+  42,
+  true,
+  {},
+  ['github'],
+];
+
+test('an icon is a slug of letters, digits and hyphens, and anything else is refused', () => {
+  assert.deepEqual(validateServer({ ...good(), icon: 'github' }), []);
+  assert.deepEqual(validateServer(good()), []);
+  for (const icon of ICON_ACCEPTED) {
+    assert.equal(validIconSlug(icon), true, icon);
+    assert.deepEqual(validateServer({ ...good(), icon }), [], icon);
+  }
+  for (const icon of ICON_REFUSED) {
+    assert.equal(validIconSlug(icon), false, JSON.stringify(icon));
+    assert.ok(validateServer({ ...good(), icon }).some((e) => e.includes('icon')), JSON.stringify(icon));
+  }
+});
+
+test('an entry with a URL for an icon is refused, so no URL enters the catalog through it', () => {
+  const entry = { ...good(), icon: 'https://example.com/github.svg' };
+  assert.notDeepEqual(validateServer(entry), []);
+  const doc = { schemaVersion: 1, generatedAt: '2026-10-28T00:00:00Z', servers: [entry] };
+  assert.ok(validateCatalog(doc, { tier: 'verified', taken: new Set() }).some((e) => e.includes('icon')));
 });
 
 test('the two files share one id namespace and keep to their tier', () => {
