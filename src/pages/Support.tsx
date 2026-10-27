@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { HelpCircle, Shield, MessageSquare, Heart, Code } from 'lucide-react';
 import '../Support.css';
 
@@ -23,27 +24,27 @@ export default function Support() {
           </div>
           <h2>Getting Started & Installation</h2>
           <p>
-            Installation instructions are at <a href="#" className="inline-link">[[docs URL]]</a>. Read them before you start.
+            Install commands are on the <Link to="/#install" className="inline-link">home page</Link>. Then run <code>mochiii</code> in a project folder.
           </p>
           
           <div className="info-box warning-box">
             <h3>Real friction to expect:</h3>
             <ul>
               <li>
-                Mochiii is <strong>not on the VS Code Marketplace</strong>. You install it from a <a href="https://github.com/Rav-2007/codeterminal-core/releases" target="_blank" rel="noreferrer" className="inline-link">GitHub Release</a> — download the .vsix and sideload it.
+                The VS Code Marketplace listing can trail the terminal app, so a newer feature may not be in the extension yet.
               </li>
               <li>
                 <strong>Windows users:</strong> first run triggers SmartScreen's "Windows protected your PC" warning because the binaries are not Authenticode-signed. Click "More info" → "Run anyway."
               </li>
               <li>
-                <strong>No macOS build.</strong> Shipping targets are Linux x64 and Windows x64 only.
+                <strong>The VS Code extension ships for Linux x64 and Windows x64 only.</strong> Apple silicon macs and Linux arm64 get the terminal app.
               </li>
             </ul>
           </div>
 
           <div className="info-box">
             <p>
-              <strong>Why the install is manual:</strong> Mochiii is local-first. Your codebase is indexed and embedded entirely on your machine. API keys are stored in OS secret storage or a 0600 credentials file, never in the daemon's environment. Nothing listens on the network. The only outbound traffic is the prompt sent to your model provider — or, in agent mode, one prompt per approved step.
+              <strong>Where your data goes:</strong> Your codebase is indexed and embedded on your machine. API keys are stored in OS secret storage or a 0600 credentials file, never in the daemon's environment. The daemon takes requests over a local socket, not a network port. The only outbound traffic is the prompt sent to your model provider, or, in agent mode, one prompt per approved step. With a model running on your own computer, nothing leaves it.
             </p>
           </div>
         </section>
@@ -167,7 +168,7 @@ export default function Support() {
           </div>
 
           <p>
-            Mochiii is security-first: API keys are never stored in the daemon's environment, credentials are scrubbed from logs, and the daemon listens on a local socket only. If you find a vulnerability that bypasses these protections, report it privately to <strong>[[private security contact]]</strong>.
+            Mochiii is security-first: API keys are never stored in the daemon's environment, credentials are scrubbed from logs, and the daemon takes requests over a local socket, not a network port. If you find a vulnerability that bypasses these protections, report it privately to <strong>[[private security contact]]</strong>.
           </p>
 
           <div className="checklist">
@@ -210,9 +211,9 @@ export default function Support() {
             <div>
               <h3>Platforms</h3>
               <ul>
-                <li>Linux x64</li>
-                <li>Windows x64</li>
-                <li><strong>No macOS build</strong></li>
+                <li>Linux x64: extension and terminal app</li>
+                <li>Windows x64: extension and terminal app</li>
+                <li>Apple silicon macOS, Linux arm64: terminal app only</li>
               </ul>
             </div>
             
@@ -250,7 +251,7 @@ export default function Support() {
           </p>
 
           <div className="info-box">
-            <p><strong>No SLA.</strong> Mochiii is open-source software. We do our best. If you need guaranteed support or enterprise features, [[enterprise contact or "not available yet"]].</p>
+            <p><strong>No SLA.</strong> The Mochiii source is readable on GitHub under a proprietary licence. We do our best. If you need guaranteed support or enterprise features, [[enterprise contact or "not available yet"]].</p>
           </div>
         </section>
 

@@ -19,5 +19,11 @@
   "assets": {
     "directory": "./dist",
     "not_found_handling": "404-page"
-  }
+  },
+  // Branch builds run `npx wrangler preview`, which refuses to run without a
+  // `previews` block ("Your Wrangler configuration is missing a `previews`
+  // block"), so every non-main build failed. Empty is enough: the top-level
+  // settings above are production, and a Preview keeps the same assets and
+  // 404 handling. `wrangler deploy` on main ignores this block.
+  "previews": {}
 }

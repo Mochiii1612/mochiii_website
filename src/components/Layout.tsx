@@ -1,6 +1,8 @@
-import { type ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Terminal, Zap, ArrowRight } from 'lucide-react';
+import { Terminal, ArrowRight } from 'lucide-react';
+import { REPO_URL } from '../site.config';
+import Waitlist from './Waitlist';
 
 interface LayoutProps {
   children: ReactNode;
@@ -8,6 +10,20 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
+
+  // In-page links like /#install need a scroll after the route renders, including
+  // when arriving from another route (the browser's own hash scroll runs before
+  // React has mounted the target).
+  useEffect(() => {
+    if (location.hash) {
+      const target = document.getElementById(location.hash.slice(1));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+    }
+    window.scrollTo(0, 0);
+  }, [location.pathname, location.hash]);
 
   return (
     <div className="app-container">
@@ -25,26 +41,26 @@ export default function Layout({ children }: LayoutProps) {
             <span className="brand-name">Mochiii</span>
           </Link>
           <div className="nav-links">
-            <a href="/#features" className="nav-link">Architecture</a>
-            <a href="/#pipeline" className="nav-link">5-Gate Pipeline</a>
-            <a href="/#demo" className="nav-link">Live Demo</a>
+            <Link to="/#features" className="nav-link">Features</Link>
+            <Link to="/#edits" className="nav-link">Edits</Link>
+            <Link to="/#models" className="nav-link">Models</Link>
             <Link
               to="/mcp"
               className={`nav-link ${location.pathname === '/mcp' ? 'active' : ''}`}
             >
               MCP Marketplace
             </Link>
-            <Link 
-              to="/support" 
+            <Link
+              to="/support"
               className={`nav-link ${location.pathname === '/support' ? 'active' : ''}`}
             >
               Support
             </Link>
-            <a href="https://github.com/Rav-2007/codeterminal-core" target="_blank" rel="noreferrer" className="nav-cta">
-              <Zap size={14} />
-              <span>GitHub</span>
+            <a href={REPO_URL} target="_blank" rel="noreferrer" className="nav-link">GitHub</a>
+            <Link to="/#install" className="nav-cta">
+              <span>Install</span>
               <ArrowRight size={14} className="cta-arrow" />
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
@@ -52,17 +68,20 @@ export default function Layout({ children }: LayoutProps) {
       {/* Main Content */}
       {children}
 
+      <Waitlist />
+
       {/* Footer */}
       <footer className="footer container">
         <div className="footer-content">
           <div className="footer-brand">
             <Terminal size={20} className="text-gradient" />
-            <span>Mochiii Security-First Agentic Suite</span>
+            <span>Mochiii: an AI coding agent that knows your codebase</span>
           </div>
           <div className="footer-links">
+            <Link to="/#install" className="footer-link">Install</Link>
             <Link to="/mcp" className="footer-link">MCP Marketplace</Link>
             <Link to="/support" className="footer-link">Support</Link>
-            <a href="https://github.com/Rav-2007/codeterminal-core" target="_blank" rel="noreferrer" className="footer-link">GitHub</a>
+            <a href={REPO_URL} target="_blank" rel="noreferrer" className="footer-link">GitHub</a>
           </div>
           <div className="footer-copy">
             © 2026 Mochiii Core Project. All rights reserved.

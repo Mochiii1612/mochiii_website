@@ -5,7 +5,7 @@ import Support from './pages/Support';
 import Marketplace from './pages/Marketplace';
 import './App.css';
 import './engine.css';
-import './architecture.css';
+import './home.css';
 import './motion.css';
 
 function App() {
