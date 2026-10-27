@@ -52,6 +52,7 @@ const MAX_ARG = 512;
 const MAX_ENV = 24;
 const MAX_ENV_NAME = 128; // clients/vscode/src/mcpCatalog.ts validEnvName, daemon mcpEnvNamePattern
 const MAX_CATEGORIES = 10; // clients/vscode/src/mcpCatalog.ts checkServer
+const MAX_ICON = 32; // clients/vscode/src/mcpCatalog.ts MAX_ICON, daemon/mcpuser.go maxIconSlug
 
 // C0/C1 controls, and the bidi overrides and isolates that let text display in
 // an order other than the one it is stored in. Either can make a description
@@ -81,6 +82,15 @@ export function validServerId(id) {
     !id.includes('__') &&
     id !== 'builtin'
   );
+}
+
+// An icon is a slug naming a logo the extension bundles ("github"), never a URL
+// and never a path: the extension looks the slug up among its own files, falls
+// back to a generated placeholder when it has none, and fetches nothing. The same
+// rule is in clients/vscode/src/mcpCatalog.ts validIconSlug and daemon/mcpuser.go
+// validateIconSlug; the three must accept and refuse the same strings.
+export function validIconSlug(icon) {
+  return typeof icon === 'string' && icon.length > 0 && icon.length <= MAX_ICON && /^[a-z0-9-]+$/.test(icon);
 }
 
 export function validEnvName(name) {
@@ -167,6 +177,7 @@ export function validateServer(s) {
   if (!Array.isArray(s.categories) || s.categories.length > MAX_CATEGORIES || s.categories.some((c) => !CATEGORIES.includes(c)))
     at(`categories must be at most ${MAX_CATEGORIES}, from: ${CATEGORIES.join(', ')}`);
   if (s.homepage !== undefined && !httpsUrl(s.homepage)) at('homepage must be an https URL');
+  if (s.icon !== undefined && !validIconSlug(s.icon)) at(`icon must be a slug of 1-${MAX_ICON} of a-z 0-9 -, never a URL or a path`);
 
   const pkg = s.package;
   if (!pkg || !LAUNCHERS[pkg.registry]) {
