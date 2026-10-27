@@ -1,32 +1,23 @@
-# React + TypeScript + Vite
+# Mochiii website
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Vite + React + TypeScript. Three routes: `/` (the product page), `/support` and `/mcp` (the MCP marketplace). Deployed as a Cloudflare Worker serving `dist/` as static assets (`wrangler.jsonc`); a new route also needs a line in `public/_redirects`.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev      # local dev server
+npm run build    # type-check + production build
+npm run lint
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Keeping the page accurate
+
+- `src/site.config.ts` holds the install commands and the provider list.
+- The "Good to know" section on the home page carries the caveats (prompts go to the model provider, VS Code auto mode, platform coverage, unsigned binaries, licence). When a release changes any of them, update the sentence rather than leaving it stale.
+
+## The lotus
+
+The 3D lotus is a standalone viewer in `public/spz-viewer/`, loaded as an iframe by the hero in `src/pages/Home.tsx`. It is built separately; leave it alone unless you are changing the scene.
+
+## Still to fill in
+
+`src/pages/Support.tsx` still contains unfilled `[[...]]` template placeholders (security contact, response times, docs URL, and others). They need real answers from the maintainer.
