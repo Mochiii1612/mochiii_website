@@ -7,10 +7,10 @@
   },
   "servers": {
     "chrome-devtools": {
-      "launch": "[\"npx\",\"-y\",\"chrome-devtools-mcp@1.12.0\",\"\"]",
+      "launch": "[\"npx\",\"-y\",\"chrome-devtools-mcp@1.12.0\",\"--headless\",\"\"]",
       "ok": true,
-      "at": "2026-10-26T12:52:07.011Z",
-      "seconds": 2,
+      "at": "2026-10-28T15:37:56.012Z",
+      "seconds": 1,
       "tools": [
         "click",
         "close_page",
