@@ -58,6 +58,13 @@
           }
         },
         "homepage": { "type": "string", "pattern": "^https://" },
+        "icon": {
+          "description": "Names a logo bundled with the Mochiii extension, such as github. Never a URL or a path: the extension looks it up among its own files and fetches nothing.",
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "minLength": 1,
+          "maxLength": 32
+        },
         "package": {
           "type": "object",
           "required": ["registry", "identifier", "version"],
