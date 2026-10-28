@@ -10,7 +10,7 @@
     "mcp:sync": "node scripts/mcp/sync-registry.mjs",
     "mcp:check": "node scripts/mcp/check-catalog.mjs",
     "mcp:handshake": "node scripts/mcp/handshake.mjs",
-    "mcp:test": "node --test scripts/mcp/",
+    "mcp:test": "node --test scripts/mcp/*.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
