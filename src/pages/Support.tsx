@@ -196,7 +196,7 @@ export default function Support() {
             Suggest features by opening a GitHub Issue at <a href="https://github.com/Rav-2007/codeterminal-core/issues" target="_blank" rel="noreferrer" className="inline-link">github.com/Rav-2007/codeterminal-core/issues</a>. Tag it "enhancement" or "feature request."
           </p>
           <p className="text-secondary">
-            <strong>How priorities are decided:</strong> [[how priorities are decided: community vote / maintainer discretion / roadmap]]. Local-first, privacy, and edit safety are core principles and will not be compromised.
+            <strong>How priorities are decided:</strong> [[how priorities are decided: community vote / maintainer discretion / roadmap]]. Edit safety is a core principle: every change is shown to you before it's applied.
           </p>
         </section>
 
@@ -279,7 +279,7 @@ export default function Support() {
               <ul>
                 <li>Everyone who files bug reports and suggests features</li>
                 <li>Early adopters who trust Mochiii despite the rough edges</li>
-                <li>Privacy advocates who believe local-first AI tooling is worth building</li>
+                <li>Developers who run their own local models and want an agent that works with them</li>
               </ul>
             </div>
           </div>
@@ -290,7 +290,7 @@ export default function Support() {
             <ul>
               <li>Sponsoring on <a href="https://github.com/sponsors/Rav-2007" target="_blank" rel="noreferrer" className="inline-link">GitHub</a></li>
               <li>Contributing code or documentation</li>
-              <li>Spreading the word to developers who value privacy and local control</li>
+              <li>Spreading the word to developers who want a coding agent that can also run on a local model</li>
             </ul>
           </div>
         </section>
