@@ -138,7 +138,7 @@ export default function Support() {
             <details className="faq-item">
               <summary>Why is the chat shared between the editor and the terminal?</summary>
               <div className="faq-answer">
-                <p>The VS Code extension and the terminal app both connect to the same background daemon. One daemon means one chat per workspace — open both in the same folder and you'll see the same conversation. Use <code>/bookmark</code> to mark important points in a long thread.</p>
+                <p>The VS Code extension and the terminal app both connect to the same background daemon, which serves every client of a workspace from one shared conversation — open both in the same folder and you'll see the same chat. To keep a chat, the mechanism is different per client: in VS Code, click the <strong>☆</strong> next to its name, or the star on its row in History, to pin it so it's never dropped by the 50-chat/20 MB limit. In the terminal, <code>/save [name]</code> keeps the current chat, and <code>/resume</code> or <code>/history</code> lists and reopens saved ones.</p>
               </div>
             </details>
 
@@ -153,7 +153,7 @@ export default function Support() {
             <details className="faq-item">
               <summary>How do I clear or restart a conversation?</summary>
               <div className="faq-answer">
-                <p>Type <code>/clear</code> to start a new chat. Use <code>/compact</code> to summarise and shrink a long thread without losing context — bookmarked points survive compaction.</p>
+                <p>Type <code>/clear</code> to start a new chat, or <code>/compact</code> to summarise and shrink a long one. In VS Code, compacting saves the full chat to History first, so nothing already said is lost — click <strong>History</strong> (the clock button) to reopen it.</p>
               </div>
             </details>
 
