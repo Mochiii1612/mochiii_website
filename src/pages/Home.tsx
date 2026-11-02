@@ -97,7 +97,7 @@ export default function Home() {
               you undo it.
             </p>
 
-            <InstallTabs idPrefix="hero" />
+            <InstallTabs />
           </div>
 
           {/* Staged 3D Gaussian Splat Viewer: the hero's visual, right side */}
