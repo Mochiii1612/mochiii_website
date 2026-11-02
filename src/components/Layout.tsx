@@ -1,7 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Terminal, ArrowRight } from 'lucide-react';
-import { REPO_URL } from '../site.config';
 import Waitlist from './Waitlist';
 
 interface LayoutProps {
@@ -56,7 +55,6 @@ export default function Layout({ children }: LayoutProps) {
             >
               Support
             </Link>
-            <a href={REPO_URL} target="_blank" rel="noreferrer" className="nav-link">GitHub</a>
             <Link to="/#install" className="nav-cta">
               <span>Install</span>
               <ArrowRight size={14} className="cta-arrow" />
@@ -81,7 +79,6 @@ export default function Layout({ children }: LayoutProps) {
             <Link to="/#install" className="footer-link">Install</Link>
             <Link to="/mcp" className="footer-link">MCP Marketplace</Link>
             <Link to="/support" className="footer-link">Support</Link>
-            <a href={REPO_URL} target="_blank" rel="noreferrer" className="footer-link">GitHub</a>
           </div>
           <div className="footer-copy">
             © 2026 Mochiii Core Project. All rights reserved.

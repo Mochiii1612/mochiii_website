@@ -136,7 +136,7 @@ export default function Support() {
           </div>
           <h2>Report a Bug</h2>
           <p>
-            File a GitHub Issue at <a href="https://github.com/Rav-2007/codeterminal-core/issues" target="_blank" rel="noreferrer" className="inline-link">github.com/Rav-2007/codeterminal-core/issues</a>.
+            File a bug report with the details below.
           </p>
           
           <div className="checklist">
@@ -164,7 +164,7 @@ export default function Support() {
           <h2>Report a Security Issue</h2>
           
           <div className="info-box warning-box">
-            <p><strong>Do NOT open a public GitHub Issue for security vulnerabilities.</strong></p>
+            <p><strong>Do NOT report security vulnerabilities through a public bug report.</strong></p>
           </div>
 
           <p>
@@ -193,7 +193,7 @@ export default function Support() {
           </div>
           <h2>Feature Requests</h2>
           <p>
-            Suggest features by opening a GitHub Issue at <a href="https://github.com/Rav-2007/codeterminal-core/issues" target="_blank" rel="noreferrer" className="inline-link">github.com/Rav-2007/codeterminal-core/issues</a>. Tag it "enhancement" or "feature request."
+            Suggest features with a description of the request and why it matters.
           </p>
           <p className="text-secondary">
             <strong>How priorities are decided:</strong> [[how priorities are decided: community vote / maintainer discretion / roadmap]]. Local-first, privacy, and edit safety are core principles and will not be compromised.
@@ -241,7 +241,6 @@ export default function Support() {
           <div className="contact-box">
             <h3>Support channels:</h3>
             <ul>
-              <li>GitHub Issues: <a href="https://github.com/Rav-2007/codeterminal-core/issues" target="_blank" rel="noreferrer" className="inline-link">github.com/Rav-2007/codeterminal-core/issues</a></li>
               <li>[[community link or "none yet"]]</li>
             </ul>
           </div>
@@ -251,7 +250,7 @@ export default function Support() {
           </p>
 
           <div className="info-box">
-            <p><strong>No SLA.</strong> The Mochiii source is readable on GitHub under a proprietary licence. We do our best. If you need guaranteed support or enterprise features, [[enterprise contact or "not available yet"]].</p>
+            <p><strong>No SLA.</strong> We do our best. If you need guaranteed support or enterprise features, [[enterprise contact or "not available yet"]].</p>
           </div>
         </section>
 
@@ -264,16 +263,6 @@ export default function Support() {
           <p>Mochiii is made possible by the support of our community. Special thanks to:</p>
           
           <div className="supporters-grid">
-            <div className="supporter-card glass-panel">
-              <h3>Sponsors</h3>
-              <p>Support us on <a href="https://github.com/sponsors/Rav-2007" target="_blank" rel="noreferrer" className="inline-link">GitHub Sponsors</a></p>
-            </div>
-
-            <div className="supporter-card glass-panel">
-              <h3>Contributors</h3>
-              <p>See the full list at <a href="https://github.com/Rav-2007/codeterminal-core/graphs/contributors" target="_blank" rel="noreferrer" className="inline-link">GitHub</a></p>
-            </div>
-
             <div className="supporter-card glass-panel">
               <h3>Community</h3>
               <ul>
@@ -288,7 +277,6 @@ export default function Support() {
             <h3>Support Mochiii's Development</h3>
             <p>If you'd like to support the project, consider:</p>
             <ul>
-              <li>Sponsoring on <a href="https://github.com/sponsors/Rav-2007" target="_blank" rel="noreferrer" className="inline-link">GitHub</a></li>
               <li>Contributing code or documentation</li>
               <li>Spreading the word to developers who value privacy and local control</li>
             </ul>
@@ -299,10 +287,6 @@ export default function Support() {
         <section className="support-section links-section">
           <h2>Helpful Links</h2>
           <div className="links-grid">
-            <a href="https://github.com/Rav-2007/codeterminal-core" target="_blank" rel="noreferrer" className="link-card">
-              <Code size={20} />
-              <span>Repository</span>
-            </a>
             <a href="#" className="link-card">
               <HelpCircle size={20} />
               <span>Documentation</span>
