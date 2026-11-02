@@ -1,12 +1,8 @@
 /** Everything on the site that goes stale when a release ships lives here. */
-export const REPO_URL = 'https://github.com/Rav-2007/codeterminal-core';
-
-const LATEST_RELEASE = `${REPO_URL}/releases/latest/download`;
-
 export const EXTENSION_ID = 'MochiiiAIAgent.mochiii-vscode';
 export const MARKETPLACE_URL = `https://marketplace.visualstudio.com/items?itemName=${EXTENSION_ID}`;
 
-export type InstallTargetId = 'unix' | 'windows' | 'npm' | 'vscode';
+export type InstallTargetId = 'npm' | 'vscode';
 
 export interface InstallTarget {
   id: InstallTargetId;
@@ -22,22 +18,10 @@ export interface InstallTarget {
  */
 export const INSTALL_TARGETS: InstallTarget[] = [
   {
-    id: 'unix',
-    label: 'macOS · Linux',
-    command: `curl -fsSL ${LATEST_RELEASE}/install.sh | sh`,
-    note: 'Terminal app for Apple silicon macs and Linux (x64, arm64). Verifies the release checksums and needs no admin rights.',
-  },
-  {
-    id: 'windows',
-    label: 'Windows',
-    command: `powershell -ExecutionPolicy ByPass -c "irm ${LATEST_RELEASE}/install.ps1 | iex"`,
-    note: 'Terminal app for Windows x64. Run it in PowerShell. Release binaries are not code-signed; see Limits.',
-  },
-  {
     id: 'npm',
     label: 'npm',
     command: 'npm install -g mochiii',
-    note: 'Needs Node.js 18 or later. The same command on every system.',
+    note: 'Needs Node.js 18 or later. The same command on macOS, Linux, and Windows.',
   },
   {
     id: 'vscode',
