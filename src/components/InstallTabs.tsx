@@ -2,17 +2,12 @@ import { useState } from 'react';
 import { Check, Copy, Terminal } from 'lucide-react';
 import { INSTALL_TARGETS, type InstallTargetId } from '../site.config';
 
-function defaultTarget(): InstallTargetId {
-  if (typeof navigator !== 'undefined' && /windows/i.test(navigator.userAgent)) return 'windows';
-  return 'unix';
-}
-
 /**
  * Tabbed install box. One command per surface, with a copy button.
  * Used in the hero and again in the install section.
  */
 export default function InstallTabs({ idPrefix }: { idPrefix: string }) {
-  const [active, setActive] = useState<InstallTargetId>(defaultTarget);
+  const [active, setActive] = useState<InstallTargetId>(INSTALL_TARGETS[0].id);
   const [copied, setCopied] = useState(false);
   const target = INSTALL_TARGETS.find((t) => t.id === active) ?? INSTALL_TARGETS[0];
 
@@ -53,7 +48,7 @@ export default function InstallTabs({ idPrefix }: { idPrefix: string }) {
         className="install-box-terminal"
       >
         <code>
-          <span className="install-prompt" aria-hidden="true">{target.id === 'windows' ? 'PS>' : '$'}</span>
+          <span className="install-prompt" aria-hidden="true">$</span>
           {target.command}
         </code>
         <button className="install-box-copy" onClick={copy} aria-label="Copy install command">
