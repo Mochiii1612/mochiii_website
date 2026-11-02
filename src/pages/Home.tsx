@@ -165,7 +165,7 @@ export default function Home() {
       {/* ═══ PRIVACY ═══ */}
       <section id="privacy" className="section-tight container">
         <Reveal className="section-header">
-          <h2>Built for privacy.</h2>
+          <h2>You choose where your code goes.</h2>
           <p className="text-secondary">
             Your codebase is indexed, embedded and searched on your own computer. Only your prompt, with the
             code it needs, goes to the model provider you choose. Use a local model and it goes nowhere. Your
