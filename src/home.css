@@ -4,18 +4,11 @@
 
 section[id] { scroll-margin-top: 96px; }
 
-/* ── Install box: tabs in the label row ── */
-.install-tabs { gap: 4px; flex-wrap: wrap; }
-.install-tabs > svg { margin-right: 4px; flex-shrink: 0; }
-.install-tab {
-  background: transparent; border: 1px solid transparent; border-radius: 7px;
-  padding: 4px 10px; font: inherit; font-size: 0.78rem; font-weight: 600;
-  color: var(--text-secondary); cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+/* ── Install box: one universal command ── */
+.install-os-row {
+  padding: 8px 16px; font-size: 0.76rem; font-weight: 600;
+  color: var(--text-secondary); border-bottom: 1px solid var(--glass-border);
 }
-.install-tab:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-.install-tab.active { background: var(--ink); color: #fff; }
-.install-tab:focus-visible,
 .install-box-copy:focus-visible,
 .proof:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
 
