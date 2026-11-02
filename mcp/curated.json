@@ -119,7 +119,7 @@
       "homepage": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
       "description": "Inspect and debug a live Chrome: network requests, console, performance traces and DOM, from the Chrome DevTools team.",
       "package": { "registry": "npm", "identifier": "chrome-devtools-mcp", "version": "1.12.0" },
-      "args": ["--headless"],
+      "args": ["--headless", "--no-usage-statistics"],
       "env": []
     },
     {
