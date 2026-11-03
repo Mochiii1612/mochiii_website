@@ -5,6 +5,9 @@ export const INSTALL_COMMAND = 'npm install -g mochiii';
 /** One line under the command. Keep it to facts the release files back up. */
 export const INSTALL_NOTE = 'Needs Node.js 18 or later. The same command on every system.';
 
+/** The documentation site, linked from the nav and the footer. */
+export const DOCS_URL = 'https://docs.mochiii.in';
+
 export const PROVIDERS = [
   'OpenRouter',
   'OpenAI',
