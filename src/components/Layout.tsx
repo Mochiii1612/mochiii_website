@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Terminal, ArrowRight } from 'lucide-react';
 import Waitlist from './Waitlist';
+import MoreMenu from './MoreMenu';
 import { DOCS_URL } from '../site.config';
 
 interface LayoutProps {
@@ -44,12 +45,6 @@ export default function Layout({ children }: LayoutProps) {
             <Link to="/#features" className="nav-link">Features</Link>
             <Link to="/#edits" className="nav-link">Edits</Link>
             <Link to="/#models" className="nav-link">Models</Link>
-            <Link
-              to="/mcp"
-              className={`nav-link ${location.pathname === '/mcp' ? 'active' : ''}`}
-            >
-              MCP Marketplace
-            </Link>
             <a href={DOCS_URL} target="_blank" rel="noreferrer noopener" className="nav-link">
               Docs
             </a>
@@ -59,6 +54,7 @@ export default function Layout({ children }: LayoutProps) {
             >
               Support
             </Link>
+            <MoreMenu />
             <Link to="/#install" className="nav-cta">
               <span>Install</span>
               <ArrowRight size={14} className="cta-arrow" />
