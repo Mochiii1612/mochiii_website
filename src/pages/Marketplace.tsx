@@ -280,7 +280,7 @@ export default function Marketplace() {
           <div>
             <ShieldCheck size={18} />
             <p>
-              <strong>Verified servers.</strong> Each server here is an official one Mochiii chose.
+              <strong>Verified servers.</strong> Each server here has been started and its tools checked with Mochiii.
             </p>
           </div>
         </div>
