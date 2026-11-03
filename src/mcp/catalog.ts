@@ -48,11 +48,6 @@ export function loadCatalog(): Promise<CatalogFile> {
   return getJson(CATALOG_URL);
 }
 
-export function loadCommunity(catalog: CatalogFile): Promise<CatalogFile> {
-  const path = catalog.community?.path ?? 'community.json';
-  return getJson(new URL(path, new URL(CATALOG_URL, window.location.origin)).pathname);
-}
-
 /** The Mochiii extension's id: publisher.name from its package.json. */
 export const EXTENSION_ID = 'MochiiiAIAgent.mochiii-vscode';
 
