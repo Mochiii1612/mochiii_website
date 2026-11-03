@@ -37,15 +37,12 @@ export default function Support() {
               <li>
                 <strong>The VS Code extension ships for Linux x64 and Windows x64 only.</strong> Apple silicon macs and Linux arm64 get the terminal app; Windows on ARM runs the terminal app's x64 build under Windows' own emulation.
               </li>
-              <li>
-                Mochiii is not code-signed, so installers verify the download against the release's checksums instead. Since the installers download with <code>curl</code> and PowerShell rather than a browser, Windows SmartScreen and macOS Gatekeeper do not flag the install.
-              </li>
             </ul>
           </div>
 
           <div className="info-box">
             <p>
-              <strong>Where your data goes:</strong> your codebase is indexed and searched on your own machine. With a local model, your prompt stays on your computer. With an API key, your prompt and the code it needs go to that provider. Keys are stored in a file in <code>~/.mochiii</code>, readable only by you, never checked into a project. The daemon takes requests over a local socket, not a network port — nothing on your machine listens for incoming connections. In agent mode, a server you add can reach the internet only once you turn on <code>/web</code>.
+              <strong>Where your data goes:</strong> your codebase is indexed and searched on your own machine. Your question, and the code Mochiii finds for it, go to the model you connect: the provider's API with an API key, or the model server on your computer with a local model. A key you connect is stored in <code>~/.mochiii/credentials.json</code>, readable only by you, outside your project. The daemon takes requests over a local socket and opens no network port. In agent mode, Mochiii's web tools can send text to the internet; for a model on your computer they stay off until you type <code>/web on</code>.
             </p>
           </div>
         </section>
@@ -57,23 +54,25 @@ export default function Support() {
           </div>
           <h2>MCP Servers & Agent Mode</h2>
           <p>
-            Agent mode is <strong>off by default</strong>. Turning it on takes a <code>models.json</code> of your
-            own with its <code>mcp</code> block set to <code>enabled: true</code> — <code>models.agent.json</code> in
-            the repository is a worked example. Point <code>mochiii.configPath</code> (VS Code) or the terminal
-            app's config at that file's absolute path, then restart the daemon.
+            In the terminal app, agent mode is on: <code>/mcp-server</code> says <code>Agent mode is ON</code>. In
+            VS Code it is <strong>off by default</strong>. Turning it on there takes a <code>models.json</code> of
+            your own with its <code>mcp</code> block set to <code>enabled: true</code> — <code>models.agent.json</code> in
+            the repository is a worked example. Point <code>mochiii.configPath</code> at that file's absolute path,
+            then restart the daemon.
           </p>
           <p>
-            Built-in tools — file edits, search, running commands — are confined by the same checks that gate
-            every edit. An MCP server you add is an ordinary program running with your full access, not
-            sandboxed, so each one needs <code>acknowledged_unconfined: true</code> before it can run, and every
-            tool call still waits for your approval.
+            Most built-in tools are confined. <code>/mcp-server</code> marks the ones that are not with{' '}
+            <code>NO</code> in its CONFINED column — <code>run_command</code>, for example — and their approval
+            says <code>NOT SANDBOXED</code>. An MCP server you add is an ordinary program running with your full
+            access, not sandboxed, so Mochiii asks you to type its name before adding it, and each of its tools
+            asks before it runs.
           </p>
 
           <div className="info-box">
             <p>
-              <strong>Adding a server:</strong> use Customize → MCP → Marketplace in VS Code, the <code>/mcp</code>{' '}
-              panel in the terminal app, or <code>/mcp-server add &lt;name&gt; &lt;command&gt;</code>. Mochiii shows
-              exactly what will run and asks you to type the server's name before anything is added.
+              <strong>Adding a server:</strong> in VS Code, type <code>/mcp</code> in the chat or open Customize →
+              MCP → Marketplace; in the terminal app, use <code>/mcp-server add &lt;name&gt; &lt;command&gt;</code>.
+              Mochiii shows exactly what will run and asks you to type the server's name before anything is added.
             </p>
           </div>
 
@@ -84,14 +83,14 @@ export default function Support() {
                 <li>Most <a href="/mcp" className="inline-link">verified servers</a> run with Node.js (<code>npx</code>) and need nothing extra installed.</li>
                 <li>A few need <code>uv</code> (<code>uvx</code>) installed — Fetch, Git and Redis in the current catalog.</li>
                 <li>A few need Docker running — GitHub and Terraform in the current catalog.</li>
-                <li>Some ask for a key or a sign-in right after you add them; one that needs neither starts straight away.</li>
+                <li>A server that needs a key starts without it until you set one with <code>/mcp-server key &lt;name&gt; &lt;VARIABLE&gt;</code> (terminal) or <strong>Set Key for MCP Server…</strong> (VS Code). Mochiii says so when you add it.</li>
               </ul>
             </div>
             <div>
               <h3>Good to know</h3>
               <ul>
-                <li>The chat shows at most 24 tools across all your servers at once. When a server's tools don't fit, Mochiii reaches the rest with <code>find_tools</code> automatically — that's expected, not a sign of a broken server.</li>
-                <li>A server with many tools (a database or GitHub server, for example) is only partly on the menu for an ordinary question; asking about it by name brings more of its tools in.</li>
+                <li>The model is shown at most 24 tools at a time, Mochiii's own included. When your servers' tools don't all fit, the model can look up the rest with <code>find_tools</code> — that's expected, not a sign of a broken server.</li>
+                <li>When you add a server whose tools don't all fit, Mochiii says how many are left off, and <code>/mcp-server</code> lists them.</li>
               </ul>
             </div>
           </div>
@@ -109,15 +108,15 @@ export default function Support() {
               <summary>The daemon won't start, or the panel says it can't connect.</summary>
               <div className="faq-answer">
                 <p><strong>Cause:</strong> Mochiii's background service for this folder isn't running.</p>
-                <p><strong>Fix:</strong> On Linux, check with <code>ps aux | grep mochiii-daemon</code>; on Windows, check Task Manager. In VS Code, run <strong>Mochiii: Restart Daemon</strong> from the Command Palette, then <strong>Mochiii: Show Daemon Log</strong> if it still won't connect. In the terminal app, check the log in your state directory (<code>~/.local/state/mochiii</code> on macOS/Linux, <code>%LOCALAPPDATA%\mochiii</code> on Windows).</p>
+                <p><strong>Fix:</strong> In VS Code, run <strong>Mochiii: Restart Daemon</strong> from the Command Palette, then <strong>Mochiii: Show Daemon Log</strong> if it still won't connect. In the terminal app, run <code>mochiii --stop</code> in the project folder and start <code>mochiii</code> again; its log is in the <code>logs</code> folder of your state directory (<code>~/.local/state/mochiii</code> on macOS/Linux, <code>%LOCALAPPDATA%\mochiii</code> on Windows).</p>
               </div>
             </details>
 
             <details className="faq-item">
               <summary>An MCP server won't start.</summary>
               <div className="faq-answer">
-                <p><strong>Cause:</strong> most often a missing runtime — the server needs <code>uv</code> or Docker installed and on your <code>PATH</code>, or it's missing a required key.</p>
-                <p><strong>Fix:</strong> the add attempt, and the <code>/mcp</code> panel or <strong>Mochiii: Show MCP Tools</strong>, say what the server still needs and whether it started. Install the missing runtime, or set the key with <code>/mcp-server key</code> (terminal) or <strong>Set Key for MCP Server…</strong> (VS Code), then try again.</p>
+                <p><strong>Cause:</strong> most often the program that starts it isn't installed — <code>uv</code> or Docker, for example — or a key it needs isn't set. A first start can also take longer than Mochiii waits, for example while <code>npx</code> downloads the server.</p>
+                <p><strong>Fix:</strong> in the terminal app, <code>/mcp-server check &lt;name&gt;</code> starts the server and says whether it connected, and if not, why; add <code>--timeout 60</code> to wait longer. In VS Code, run <strong>Mochiii: Check MCP Server</strong>. Install the missing program, or set the key with <code>/mcp-server key</code> (terminal) or <strong>Set Key for MCP Server…</strong> (VS Code), then check again.</p>
               </div>
             </details>
 
@@ -146,7 +145,7 @@ export default function Support() {
               <summary>I sent a message and nothing happened.</summary>
               <div className="faq-answer">
                 <p><strong>Cause:</strong> usually the daemon isn't running, or the model provider returned an error or timed out.</p>
-                <p><strong>Fix:</strong> check the daemon is running (see above). In VS Code, check <strong>Mochiii: Show Daemon Log</strong> for the error. If you just connected a new provider, restart the daemon.</p>
+                <p><strong>Fix:</strong> check the daemon is running (see above). In VS Code, check <strong>Mochiii: Show Daemon Log</strong> for the error; in the terminal app, check its log (see above).</p>
               </div>
             </details>
 
@@ -168,14 +167,14 @@ export default function Support() {
             <details className="faq-item">
               <summary>My attachments (PDF, Word, images) aren't reading.</summary>
               <div className="faq-answer">
-                <p>Attachments are read on your machine, not uploaded anywhere, for PDF (including scanned pages, by OCR), Word (.docx), Excel (.xlsx), PowerPoint (.pptx) and images. Old <code>.doc</code>/<code>.xls</code>/<code>.ppt</code> files and images with no readable text are refused with a message explaining why. Check <strong>Mochiii: Show Daemon Log</strong> for a parsing error, and file a bug if a file in a supported format still won't read.</p>
+                <p>In VS Code, attachments are read on your machine and turned into text, which is added to your prompt. That works for PDF (including scanned pages, by OCR), Word (.docx), Excel (.xlsx), PowerPoint (.pptx) and images. Old <code>.doc</code>/<code>.xls</code>/<code>.ppt</code> files and images with no readable text are refused with a message explaining why. Check <strong>Mochiii: Show Daemon Log</strong> for a parsing error, and file a bug if a file in a supported format still won't read.</p>
               </div>
             </details>
 
             <details className="faq-item">
               <summary>Where are my chat logs stored?</summary>
               <div className="faq-answer">
-                <p>In your state directory: <code>~/.local/state/mochiii</code> on macOS and Linux (or <code>$XDG_STATE_HOME/mochiii</code> if you've set that), and <code>%LOCALAPPDATA%\mochiii</code> on Windows. Logs may contain file paths from your workspace but <strong>never contain API keys</strong> — Mochiii's own credentials are scrubbed from every log, prompt and tool result before they're written.</p>
+                <p>In your state directory: <code>~/.local/state/mochiii</code> on macOS and Linux (or <code>$XDG_STATE_HOME/mochiii</code> if you've set that), and <code>%LOCALAPPDATA%\mochiii</code> on Windows. Logs may contain file paths from your workspace. Mochiii removes its own API key from what it writes there.</p>
               </div>
             </details>
           </div>
@@ -204,7 +203,7 @@ export default function Support() {
           </div>
 
           <div className="info-box">
-            <p><strong>Note:</strong> logs may contain file paths from your workspace. They never contain API keys (those are scrubbed). Redact anything else sensitive before posting.</p>
+            <p><strong>Note:</strong> logs may contain file paths from your workspace. Mochiii removes its own API key from them. Redact anything else sensitive before sending them.</p>
           </div>
         </section>
 
@@ -220,9 +219,8 @@ export default function Support() {
           </div>
 
           <p>
-            Keys are never written in plain sight: they're stored in a file only you can read and sent only to
-            the provider that issued them, the daemon's own credentials are scrubbed from every log, and the
-            daemon takes requests over a local socket, not a network port. If you find a vulnerability that
+            A key you connect is stored in a file only you can read, Mochiii removes its own key from its logs,
+            and the daemon takes requests over a local socket, not a network port. If you find a vulnerability that
             bypasses these protections, report it privately to <strong>[[private security contact]]</strong>.
           </p>
 
@@ -251,7 +249,7 @@ export default function Support() {
             Suggest features with a description of the request and why it matters.
           </p>
           <p className="text-secondary">
-            Edit safety is a core principle: every change is shown to you before it's applied.
+            Edit safety is a core principle: every edit is shown to you as a diff before it's applied.
           </p>
         </section>
 
@@ -298,7 +296,7 @@ export default function Support() {
           <div className="contact-box">
             <h3>Support channels:</h3>
             <ul>
-              <li>No public support channel is set up yet. File a bug report or feature request with the details above.</li>
+              <li>Email <a href="mailto:mochiiijuly@gmail.com" className="inline-link">mochiiijuly@gmail.com</a> to reach us, with a bug report, a feature request or a question.</li>
             </ul>
           </div>
 
