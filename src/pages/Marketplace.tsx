@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Search, ShieldCheck, Package, Copy, Check, ExternalLink, KeyRound, Puzzle, Lock } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { createPortal } from 'react-dom';
+import { Search, ShieldCheck, Package, Copy, Check, ExternalLink, KeyRound, Puzzle, Lock, X } from 'lucide-react';
 import {
   type CatalogFile,
   type CatalogServer,
@@ -10,6 +11,7 @@ import {
   terminalCommand,
   vscodeInstallLink,
 } from '../mcp/catalog';
+import { logoFor } from '../mcp/logos';
 import '../Marketplace.css';
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -46,69 +48,174 @@ function CopyButton({ text, label }: { text: string; label: string }) {
   );
 }
 
-function ServerCard({ server }: { server: CatalogServer }) {
+function LogoTile({ server, size }: { server: CatalogServer; size: 'card' | 'dialog' }) {
+  const src = logoFor(server.id);
+  const [failed, setFailed] = useState(false);
   return (
-    <article className="mkt-card glass-panel">
-      <header className="mkt-card-head">
-        <div className="mkt-card-title">
-          <h3>{server.name}</h3>
-          <span className="mkt-publisher">{server.publisher}</span>
-        </div>
-        <span className="mkt-badge mkt-badge-verified">
-          <ShieldCheck size={13} />
-          Verified
-        </span>
-      </header>
+    <span className={`mkt-logo mkt-logo-${size}`} aria-hidden="true">
+      {src && !failed ? (
+        <img src={src} alt="" loading="lazy" onError={() => setFailed(true)} />
+      ) : (
+        <span className="mkt-logo-letter">{server.name.charAt(0)}</span>
+      )}
+    </span>
+  );
+}
 
-      <p className="mkt-desc">{server.description}</p>
+function ServerCard({ server, onOpen }: { server: CatalogServer; onOpen: (el: HTMLButtonElement) => void }) {
+  return (
+    <button
+      type="button"
+      className="mkt-card glass-panel"
+      aria-haspopup="dialog"
+      onClick={(e) => onOpen(e.currentTarget)}
+    >
+      <span className="mkt-card-head">
+        <LogoTile server={server} size="card" />
+        <span className="mkt-card-title">
+          <span className="mkt-card-name">
+            {server.name}
+            <ShieldCheck size={15} className="mkt-card-check" aria-label="Verified" />
+          </span>
+          <span className="mkt-publisher">{server.publisher}</span>
+        </span>
+      </span>
+
+      <span className="mkt-desc mkt-desc-clamp">{server.description}</span>
 
       {server.categories.length > 0 && (
-        <div className="mkt-tags">
+        <span className="mkt-tags">
           {server.categories.map((c) => (
             <span key={c} className="mkt-tag">
               {CATEGORY_LABEL[c] ?? c}
             </span>
           ))}
-        </div>
-      )}
-
-      <div className="mkt-meta">
-        <span>
-          <Package size={13} /> {server.package.registry} · {server.package.identifier} {server.package.version}
         </span>
-        <span>Needs {RUNTIME[server.package.registry]}</span>
-      </div>
-
-      {server.env.length > 0 && (
-        <ul className="mkt-env" aria-label="Variables it reads">
-          {server.env.map((e) => (
-            <li key={e.name} title={e.description ?? ''}>
-              {e.secret ? <KeyRound size={12} /> : null}
-              <code>{e.name}</code>
-              {e.required ? <span className="mkt-env-req">required</span> : null}
-            </li>
-          ))}
-        </ul>
       )}
+    </button>
+  );
+}
 
-      <code className="mkt-cmd" title="Exactly what runs">
-        {commandLine(server)}
-      </code>
+const FOCUSABLE = 'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])';
 
-      <footer className="mkt-actions">
-        <CopyButton text={terminalCommand(server)} label={`Copy the terminal command that adds ${server.name}`} />
-        <a className="mkt-btn mkt-btn-quiet" href={vscodeInstallLink(server)}>
-          <Puzzle size={14} />
-          <span>Open in VS Code</span>
-        </a>
-        {(server.homepage ?? server.package.url) && (
-          <a className="mkt-link" href={server.homepage ?? server.package.url} target="_blank" rel="noreferrer noopener">
-            {server.homepage ? 'Homepage' : 'Package'}
-            <ExternalLink size={12} />
-          </a>
+function ServerDialog({ server, onClose }: { server: CatalogServer; onClose: () => void }) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const titleId = `mkt-dialog-title-${server.id}`;
+
+  // The page behind does not scroll while the dialog is open.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeRef.current?.focus();
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      onClose();
+      return;
+    }
+    if (e.key !== 'Tab' || !panelRef.current) return;
+    // Focus stays inside the dialog.
+    const items = [...panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE)];
+    if (items.length === 0) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
+  return createPortal(
+    <div
+      className="mkt-modal-backdrop"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        ref={panelRef}
+        className="mkt-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        onKeyDown={onKeyDown}
+      >
+        <button ref={closeRef} type="button" className="mkt-modal-close" aria-label="Close" onClick={onClose}>
+          <X size={18} />
+        </button>
+
+        <header className="mkt-modal-head">
+          <LogoTile server={server} size="dialog" />
+          <div className="mkt-card-title">
+            <h2 id={titleId}>{server.name}</h2>
+            <span className="mkt-publisher">{server.publisher}</span>
+          </div>
+          <span className="mkt-badge mkt-badge-verified">
+            <ShieldCheck size={13} />
+            Verified
+          </span>
+        </header>
+
+        <p className="mkt-desc">{server.description}</p>
+
+        {server.categories.length > 0 && (
+          <div className="mkt-tags">
+            {server.categories.map((c) => (
+              <span key={c} className="mkt-tag">
+                {CATEGORY_LABEL[c] ?? c}
+              </span>
+            ))}
+          </div>
         )}
-      </footer>
-    </article>
+
+        <div className="mkt-meta">
+          <span>
+            <Package size={13} /> {server.package.registry} · {server.package.identifier} {server.package.version}
+          </span>
+          <span>Needs {RUNTIME[server.package.registry]}</span>
+        </div>
+
+        {server.env.length > 0 && (
+          <ul className="mkt-env" aria-label="Variables it reads">
+            {server.env.map((e) => (
+              <li key={e.name} title={e.description ?? ''}>
+                {e.secret ? <KeyRound size={12} /> : null}
+                <code>{e.name}</code>
+                {e.required ? <span className="mkt-env-req">required</span> : null}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <code className="mkt-cmd" title="Exactly what runs" tabIndex={0}>
+          {commandLine(server)}
+        </code>
+
+        <footer className="mkt-actions">
+          <CopyButton text={terminalCommand(server)} label={`Copy the terminal command that adds ${server.name}`} />
+          <a className="mkt-btn mkt-btn-quiet" href={vscodeInstallLink(server)}>
+            <Puzzle size={14} />
+            <span>Open in VS Code</span>
+          </a>
+          {(server.homepage ?? server.package.url) && (
+            <a className="mkt-link" href={server.homepage ?? server.package.url} target="_blank" rel="noreferrer noopener">
+              {server.homepage ? 'Homepage' : 'Package'}
+              <ExternalLink size={12} />
+            </a>
+          )}
+        </footer>
+      </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -117,6 +224,14 @@ export default function Marketplace() {
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('');
+  const [selected, setSelected] = useState<CatalogServer | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const closeDialog = () => {
+    setSelected(null);
+    // Focus goes back to the card that opened the dialog.
+    requestAnimationFrame(() => triggerRef.current?.focus());
+  };
 
   useEffect(() => {
     loadCatalog().then(setCatalog, (err: Error) => setError(err.message));
@@ -206,11 +321,20 @@ export default function Marketplace() {
             </p>
             <div className="mkt-grid">
               {results.map((s) => (
-                <ServerCard key={s.id} server={s} />
+                <ServerCard
+                  key={s.id}
+                  server={s}
+                  onOpen={(el) => {
+                    triggerRef.current = el;
+                    setSelected(s);
+                  }}
+                />
               ))}
             </div>
           </>
         )}
+
+        {selected && <ServerDialog server={selected} onClose={closeDialog} />}
 
         {catalog && (
           <p className="mkt-footer-note">
@@ -222,6 +346,8 @@ export default function Marketplace() {
             <a className="inline-link" href="/api/mcp/v1/catalog.schema.json">
               schema
             </a>
+            <br />
+            Logos are trademarks of their owners. Git logo by Jason Long, CC BY 3.0.
           </p>
         )}
       </div>

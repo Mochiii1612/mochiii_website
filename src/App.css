@@ -72,6 +72,33 @@
 .nav-link.active { color: #C2436B; background: rgba(194,67,107,0.06); }
 .nav-link.active::after { width: 50%; }
 
+/* "More" menu in the top navigation */
+.nav-more { position: relative; }
+.nav-more-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  border: none; background: transparent; font: inherit; font-size: 0.88rem; font-weight: 500;
+  color: #777; cursor: pointer;
+}
+.nav-more-btn[aria-expanded="true"] { color: #C2436B; background: rgba(194,67,107,0.04); }
+.nav-more-chevron { transition: transform 0.2s ease; }
+.nav-more-chevron.open { transform: rotate(180deg); }
+.nav-more-menu {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 120;
+  min-width: 200px; padding: 6px;
+  display: flex; flex-direction: column; gap: 2px;
+  background: #fff; border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  animation: navMoreIn 0.15s ease-out;
+}
+@keyframes navMoreIn { from { opacity: 0; } to { opacity: 1; } }
+.nav-more-item {
+  padding: 9px 12px; border-radius: 8px;
+  font-size: 0.88rem; font-weight: 500; color: #444; white-space: nowrap;
+}
+.nav-more-item:hover, .nav-more-item:focus-visible { color: #C2436B; background: rgba(194,67,107,0.06); outline: none; }
+.nav-more-item[aria-current="page"] { color: #C2436B; }
+.nav-more-btn:focus-visible { outline: 2px solid #C2436B; outline-offset: 2px; }
+
 /* Solid dark CTA pill — accent color is reserved for emphasis, not buttons */
 .nav-cta {
   display: flex; align-items: center; gap: 6px;
@@ -222,6 +249,8 @@
   .hero-title { font-size: 2.4rem; }
   .nav-links { flex-wrap: wrap; justify-content: center; gap: 4px; }
   .nav-link { font-size: 0.8rem; padding: 6px 10px; }
+  .nav-more-btn { font-size: 0.8rem; }
+  .nav-more-menu { right: auto; left: 50%; transform: translateX(-50%); }
   .nav-cta { font-size: 0.8rem; padding: 7px 14px; }
   .features-list { grid-template-columns: 1fr; gap: 28px; }
 }

@@ -145,32 +145,92 @@
 
 .mkt-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
+  align-items: stretch;
 }
 
+/* A card is one button: it opens the server's details. */
 .mkt-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  align-items: stretch;
+  gap: 14px;
   padding: 20px;
   min-width: 0;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.mkt-card:hover {
+  border-color: rgba(194, 67, 107, 0.35);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+.mkt-card:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 3px;
 }
 
 .mkt-card-head {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-}
-.mkt-card-title {
+  align-items: center;
+  gap: 12px;
   min-width: 0;
 }
-.mkt-card-title h3 {
-  font-size: 1.15rem;
+.mkt-card-title {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.mkt-card-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.1rem;
+  font-weight: 700;
   line-height: 1.3;
+  color: var(--text-primary);
   overflow-wrap: anywhere;
 }
+.mkt-card-check {
+  flex: none;
+  color: var(--accent-success);
+}
+
+/* The logo tile: the server's own logo, or its first letter. */
+.mkt-logo {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--glass-border);
+  overflow: hidden;
+}
+.mkt-logo img {
+  max-width: 76%;
+  max-height: 76%;
+  object-fit: contain;
+}
+.mkt-logo-card {
+  width: 48px;
+  height: 48px;
+}
+.mkt-logo-dialog {
+  width: 56px;
+  height: 56px;
+}
+.mkt-logo-letter {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
 .mkt-publisher {
   font-size: 0.82rem;
   color: var(--text-secondary);
@@ -192,12 +252,20 @@
 }
 
 .mkt-desc {
+  display: block;
   font-size: 0.92rem;
   color: var(--text-secondary);
   line-height: 1.55;
 }
+.mkt-desc-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 .mkt-tags {
+  margin-top: auto;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -320,14 +388,113 @@
   color: var(--text-secondary);
 }
 
+/* The details dialog. */
+.mkt-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 15, 20, 0.45);
+  backdrop-filter: blur(3px);
+  animation: mktFade 0.15s ease-out;
+}
+.mkt-modal {
+  position: relative;
+  width: min(640px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 26px;
+  border-radius: 16px;
+  background: var(--bg-primary);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+  overflow-wrap: anywhere;
+}
+.mkt-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-right: 36px;
+}
+.mkt-modal-head h2 {
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+.mkt-modal-head .mkt-badge {
+  margin-left: auto;
+}
+.mkt-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.mkt-modal-close:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+.mkt-modal-close:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+.mkt-modal .mkt-actions {
+  margin-top: 4px;
+}
+@keyframes mktFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 960px) {
+  .mkt-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 860px) {
   .mkt-safety {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 620px) {
   .mkt-grid {
     grid-template-columns: 1fr;
+  }
+  /* On a phone the dialog is a full-width sheet from the bottom. */
+  .mkt-modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .mkt-modal {
+    width: 100%;
+    max-height: 88vh;
+    border-radius: 16px 16px 0 0;
+    padding: 22px 18px 26px;
+  }
+  .mkt-modal-head {
+    flex-wrap: wrap;
+  }
+  .mkt-modal-head .mkt-badge {
+    margin-left: 0;
   }
 }
