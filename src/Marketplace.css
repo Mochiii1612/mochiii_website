@@ -94,32 +94,9 @@
   color: var(--text-primary);
 }
 
-.mkt-tabs {
-  display: inline-flex;
-  padding: 4px;
-  border-radius: 10px;
-  background: var(--bg-tertiary);
-  gap: 4px;
-}
-.mkt-tab {
-  border: none;
-  background: transparent;
-  padding: 8px 14px;
-  border-radius: 7px;
-  font: inherit;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-.mkt-tab.active {
-  background: var(--bg-primary);
-  color: var(--accent-primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-.mkt-tab:focus-visible,
 .mkt-cat:focus-visible,
-.mkt-btn:focus-visible {
+.mkt-btn:focus-visible,
+.mkt-link:focus-visible {
   outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
@@ -144,16 +121,6 @@
   border-color: var(--accent-primary);
   color: var(--accent-primary);
   background: rgba(194, 67, 107, 0.06);
-}
-
-.mkt-note {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  padding: 12px 16px;
-  border-left: 3px solid var(--accent-error);
-  background: rgba(239, 68, 68, 0.04);
-  border-radius: 0 8px 8px 0;
-  margin-bottom: 18px;
 }
 
 .mkt-error,
@@ -222,10 +189,6 @@
 .mkt-badge-verified {
   color: var(--accent-success);
   background: rgba(16, 185, 129, 0.1);
-}
-.mkt-badge-community {
-  color: var(--text-secondary);
-  background: var(--bg-tertiary);
 }
 
 .mkt-desc {
@@ -296,15 +259,10 @@
   white-space: nowrap;
 }
 
-.mkt-provenance {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  overflow-wrap: anywhere;
-}
-
 .mkt-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
   margin-top: auto;
 }
@@ -328,20 +286,31 @@
 .mkt-btn-primary:hover {
   background: var(--accent-secondary);
 }
-.mkt-btn-ghost {
+/* The secondary action: lighter than the primary, still a button. */
+.mkt-btn-quiet {
   background: transparent;
   border-color: var(--glass-border);
-  color: var(--text-primary);
+  color: var(--text-secondary);
+  font-weight: 500;
 }
-.mkt-btn-ghost:hover {
+.mkt-btn-quiet:hover {
   border-color: rgba(194, 67, 107, 0.35);
   color: var(--accent-primary);
 }
 
-.mkt-more {
-  display: flex;
-  justify-content: center;
-  margin-top: 28px;
+/* The server's homepage: a plain text link, not a button. */
+.mkt-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.mkt-link:hover {
+  color: var(--accent-primary);
 }
 
 .mkt-footer-note {
@@ -360,12 +329,5 @@
 @media (max-width: 520px) {
   .mkt-grid {
     grid-template-columns: 1fr;
-  }
-  .mkt-tabs {
-    width: 100%;
-  }
-  .mkt-tab {
-    flex: 1;
-    padding: 8px 6px;
   }
 }
