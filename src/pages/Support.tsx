@@ -83,10 +83,11 @@ export default function Support() {
             <div>
               <h3>What a server needs</h3>
               <ul>
-                <li>Most <a href="/mcp" className="inline-link">verified servers</a> run with Node.js (<code>npx</code>) and need nothing extra installed.</li>
-                <li>A few need <code>uv</code> (<code>uvx</code>) installed — Fetch, Git and Redis in the current catalog.</li>
-                <li>A few need Docker running — GitHub and Terraform in the current catalog.</li>
-                <li>A server that needs a key starts without it until you set one with <code>/mcp-server key &lt;name&gt; &lt;VARIABLE&gt;</code> (terminal) or <strong>Set Key for MCP Server…</strong> (VS Code). Mochiii says so when you add it.</li>
+                <li>Most <a href="/mcp" className="inline-link">verified servers</a> run with Node.js (<code>npx</code>) and need nothing extra installed. Azure and the Angular CLI need Node.js 22 or later.</li>
+                <li>Some need <code>uv</code> (<code>uvx</code>) installed — the AWS servers, ClickHouse, Fetch, Git, MarkItDown and Redis in the current catalog.</li>
+                <li>A few need Docker running — GitHub, Grafana, SonarQube, Terraform and Vault in the current catalog.</li>
+                <li>A few also need their vendor's own command-line tool, such as the Heroku CLI. The server's description on <a href="/mcp" className="inline-link">the marketplace</a> says so.</li>
+                <li>A server that needs a key may not start, or starts with fewer working tools, until you set one with <code>/mcp-server key &lt;name&gt; &lt;VARIABLE&gt;</code> (terminal) or <strong>Set Key for MCP Server…</strong> (VS Code). Mochiii says so when you add it.</li>
               </ul>
             </div>
             <div>
