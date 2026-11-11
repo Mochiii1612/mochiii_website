@@ -16,6 +16,9 @@
 //   mongodb.png          mongodb.com/assets/images/global/favicon.ico
 //   redis.png            redis.io/apple-icon.png
 //   terraform.svg        developer.hashicorp.com icon set (flight-terraform-color-24)
+//   angular-cli.svg      angular.dev/press-kit, its "Angular logos" folder, SVG files/icon_angular.svg (black symbol), retrieved 2026-11-11; CC BY 4.0, credited on the MCP page
+//   supabase-mcp.svg     supabase.com/brand-assets/supabase-icon-green-transparent.svg (green symbol), retrieved 2026-11-11; supabase.com/brand: refer to Supabase only, files and colours unchanged
+//   prisma.svg           prisma.io/brand-kit/logo-mark/logo-mark.svg (the symbol), retrieved 2026-11-11; prisma.io/brand-kit lists the symbol for app icons, names no licence and no permission step
 
 const MCP = '/mcp-logos/mcp.png';
 
@@ -37,6 +40,9 @@ const LOGOS: Record<string, string> = {
   mongodb: '/mcp-logos/mongodb.png',
   redis: '/mcp-logos/redis.png',
   terraform: '/mcp-logos/terraform.svg',
+  'angular-cli': '/mcp-logos/angular-cli.svg',
+  'supabase-mcp': '/mcp-logos/supabase-mcp.svg',
+  prisma: '/mcp-logos/prisma.svg',
 };
 
 export function logoFor(id: string): string | undefined {
