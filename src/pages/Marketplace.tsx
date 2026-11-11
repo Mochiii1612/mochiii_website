@@ -347,7 +347,12 @@ export default function Marketplace() {
               schema
             </a>
             <br />
-            Logos are trademarks of their owners. Git logo by Jason Long, CC BY 3.0.
+            Logos are trademarks of their owners. Git logo by Jason Long, CC BY 3.0. Angular logo by the
+            Angular team at Google,{' '}
+            <a className="inline-link" href="https://creativecommons.org/licenses/by/4.0/" rel="noreferrer">
+              CC BY 4.0
+            </a>
+            , unmodified. Logos only identify each server; no partnership or endorsement is implied.
           </p>
         )}
       </div>
