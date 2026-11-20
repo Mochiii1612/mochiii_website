@@ -18,6 +18,6 @@ npm run lint
 
 The 3D lotus is a standalone viewer in `public/spz-viewer/`, loaded as an iframe by the hero in `src/pages/Home.tsx`. It is built separately; leave it alone unless you are changing the scene.
 
-## Still to fill in
+## Contact addresses
 
-`src/pages/Support.tsx` still contains unfilled `[[...]]` template placeholders (security contact, response times, docs URL, and others). They need real answers from the maintainer.
+The support and security email addresses are `SUPPORT_EMAIL` and `SECURITY_EMAIL` in `src/site.config.ts`; the Support and FAQ pages read them from there.

@@ -213,6 +213,23 @@
   }
 }
 
+/* FAQ groups: Getting started, Using it, Troubleshooting */
+.faq-group {
+  margin-bottom: 56px;
+}
+.faq-group:last-child {
+  margin-bottom: 0;
+}
+.faq-group h2 {
+  font-size: 1.6rem;
+  margin-bottom: 18px;
+  letter-spacing: -0.02em;
+}
+.faq-answer .faq-docs {
+  margin-top: 10px;
+  font-size: 0.88rem;
+}
+
 /* Checklist */
 .checklist {
   background: var(--bg-secondary);

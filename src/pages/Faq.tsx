@@ -1,5 +1,218 @@
-import { MessageSquare } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
+import { DOCS_URL, PROVIDERS, SUPPORT_EMAIL } from '../site.config';
 import '../Support.css';
+
+interface Item {
+  q: string;
+  a: ReactNode;
+  /** A page on the docs site, as [title, path]. */
+  docs?: [string, string];
+}
+
+const GROUPS: { title: string; items: Item[] }[] = [
+  {
+    title: 'Getting started',
+    items: [
+      {
+        q: 'What does beta mean?',
+        a: (
+          <>
+            Mochiii works and is used daily, but some features and docs are still being finished. Expect changes between
+            versions. Please report bugs to <a href={`mailto:${SUPPORT_EMAIL}`} className="inline-link">{SUPPORT_EMAIL}</a>.
+          </>
+        ),
+      },
+      {
+        q: 'How do I install Mochiii?',
+        a: (
+          <>
+            For VS Code, install Mochiii from the VS Code Marketplace, or run{' '}
+            <code>code --install-extension MochiiiAIAgent.mochiii-vscode</code>. For the terminal app, run{' '}
+            <code>npm install -g mochiii</code> (it needs Node.js 18 or later), then run <code>mochiii</code> inside a
+            project folder.
+          </>
+        ),
+        docs: ['Install', '/getting-started/install'],
+      },
+      {
+        q: 'Which systems does it run on?',
+        a: (
+          <>
+            The terminal app runs on Linux x64 and ARM64, macOS on Apple Silicon, and Windows x64; Windows on ARM runs the
+            x64 build under Windows' emulation. The VS Code extension is for Linux x64 and Windows x64. Intel Macs are not
+            supported.
+          </>
+        ),
+        docs: ['Install', '/getting-started/install'],
+      },
+      {
+        q: 'How do I connect a model?',
+        a: (
+          <>
+            The first run asks which AI provider to use, for its API key and for a model. Mochiii works with{' '}
+            {PROVIDERS.length} providers, and for most of them it can tell the provider from the key. Switch at any time
+            with <code>/provider</code> and <code>/model</code>.
+          </>
+        ),
+        docs: ['Connect a model', '/getting-started/connect-a-model'],
+      },
+      {
+        q: 'Can I use a model on my own computer?',
+        a: (
+          <>
+            Yes: Ollama, LM Studio, llama.cpp or vLLM, with no key. Start the server, then in the terminal app pick{' '}
+            <strong>On this computer</strong> from <code>/provider</code>, or run <code>/connect local</code>. In VS Code,
+            use the <code>mochiii.apiBase</code> and <code>mochiii.model</code> settings.
+          </>
+        ),
+        docs: ['Connect a model', '/getting-started/connect-a-model'],
+      },
+      {
+        q: 'Is Mochiii open source?',
+        a: <>No. Mochiii is proprietary, all rights reserved. Versions already published under Apache-2.0 keep that licence.</>,
+      },
+    ],
+  },
+  {
+    title: 'Using it',
+    items: [
+      {
+        q: 'Does Mochiii change my files without asking?',
+        a: (
+          <>
+            In the terminal app, each edit is shown as a diff that you apply or skip, and anything that changes a file or
+            runs a command waits for your approval. In VS Code a new chat starts in <strong>auto</strong> mode: edits apply
+            as they arrive, each still checked and undoable. Switch a chat to <strong>manual</strong> to apply each edit
+            yourself, or to <strong>plan</strong> for a plan with no edits.
+          </>
+        ),
+        docs: ['Approvals', '/using/approvals'],
+      },
+      {
+        q: 'Why does a model on my computer use no tools?',
+        a: (
+          <>
+            A model on your computer gets the code that matters with each question, and no tools, until you type{' '}
+            <code>/agent on</code>. Mochiii then tries the model with a few small test questions and uses it the way it
+            can: as a full agent, a compact agent, or for chat.
+          </>
+        ),
+        docs: ['Connect a model', '/getting-started/connect-a-model'],
+      },
+      {
+        q: 'Why are my terminal and VS Code chats separate?',
+        a: (
+          <>
+            Since 1.6.0 the terminal app and VS Code each keep their own chat, saved chats and search, and each terminal
+            window has its own chat. The terminal app starts a new chat every time you launch it: <code>/save</code> a chat
+            to keep it and <code>/resume</code> to reopen it. Your code index, saved rules and spending limits are still
+            shared.
+          </>
+        ),
+        docs: ['Saved sessions', '/using/saved-sessions'],
+      },
+      {
+        q: 'How do I start over, or shrink a long chat?',
+        a: (
+          <>
+            <code>/clear</code> starts a new chat, and <code>/compact</code> shrinks a long one.
+          </>
+        ),
+        docs: ['Terminal commands', '/using/terminal-commands'],
+      },
+      {
+        q: 'How do I add an MCP server?',
+        a: (
+          <>
+            Pick one from the <Link to="/mcp" className="inline-link">MCP Marketplace</Link>, or in the terminal app type{' '}
+            <code>/mcp</code>, press <code>a</code> and paste the JSON from the server's setup page. Its tools are ready on
+            your next question.
+          </>
+        ),
+        docs: ['Add an MCP server', '/mcp/add-a-server'],
+      },
+      {
+        q: 'How do I keep spending under control?',
+        a: (
+          <>
+            <code>/usage</code> shows tokens and cost from your provider's own bill, and <code>/budget</code> sets spending
+            limits. When a session or a day reaches its limit, Mochiii stops and asks before going on.
+          </>
+        ),
+        docs: ['Terminal commands', '/using/terminal-commands'],
+      },
+      {
+        q: 'Can I attach files in VS Code?',
+        a: <>Yes: PDFs (scanned ones too), Word, Excel, PowerPoint and images. They are read on your machine.</>,
+        docs: ['VS Code', '/using/vscode'],
+      },
+    ],
+  },
+  {
+    title: 'Troubleshooting',
+    items: [
+      {
+        q: 'I updated one client and chats stopped saving.',
+        a: (
+          <>
+            The terminal app and the VS Code extension keep chat memory in one file, and an older version can't use it once
+            a newer one has upgraded it. Update both, then run <code>mochiii -stop</code> in each folder you use the
+            terminal app in, and reload VS Code.
+          </>
+        ),
+        docs: ['Troubleshooting', '/troubleshooting'],
+      },
+      {
+        q: 'Code search is off after I installed.',
+        a: (
+          <>
+            An install of 1.5.1 or earlier made after 19 November could not download the code-search engine. Update, then
+            run <code>mochiii download-model</code>. On Linux, code search needs glibc 2.27 or newer; on Windows, the
+            Microsoft Visual C++ runtime.
+          </>
+        ),
+        docs: ['Troubleshooting', '/troubleshooting'],
+      },
+      {
+        q: "An MCP server won't start.",
+        a: (
+          <>
+            In the terminal app, <code>/mcp</code> lists every server and its state, the ones that need you first. A
+            server that fails to start says why: a key with no value (with the command that sets it), or a Node.js version
+            that is too old, for example.
+          </>
+        ),
+        docs: ['Add an MCP server', '/mcp/add-a-server'],
+      },
+      {
+        q: 'The model sent back an empty answer.',
+        a: (
+          <>
+            Mochiii says so: "the model sent back an empty answer". Ask again, or pick another model with{' '}
+            <code>/model</code>.
+          </>
+        ),
+        docs: ['Troubleshooting', '/troubleshooting'],
+      },
+      {
+        q: 'The mochiii command is not found after I installed it.',
+        a: <>Open a new terminal: the one you installed from may not find the new command yet.</>,
+        docs: ['Install', '/getting-started/install'],
+      },
+      {
+        q: 'Where are the logs?',
+        a: (
+          <>
+            In <code>~/.local/state/mochiii/logs/</code>. Logs can contain file paths from your project, so check them
+            before you send them to us.
+          </>
+        ),
+        docs: ['Troubleshooting', '/troubleshooting'],
+      },
+    ],
+  },
+];
 
 export default function Faq() {
   return (
@@ -10,95 +223,32 @@ export default function Faq() {
             Frequently Asked <span className="text-gradient">Questions</span>
           </h1>
           <p className="support-subtitle">
-            Answers to common problems, with steps you can run yourself.
+            Short answers, each with a link to the docs. Still stuck? See <Link to="/support" className="inline-link">Support</Link>.
           </p>
         </div>
       </div>
 
       <div className="support-content container">
-        {/* Troubleshooting & FAQ */}
-        <section className="support-section">
-          <div className="section-icon">
-            <MessageSquare size={24} />
-          </div>
-          <h2>Troubleshooting & FAQ</h2>
-
-          <div className="faq-list">
-            <details className="faq-item">
-              <summary>The daemon won't start, or the panel says it can't connect.</summary>
-              <div className="faq-answer">
-                <p><strong>Cause:</strong> Mochiii's background service for this folder isn't running.</p>
-                <p><strong>Fix:</strong> In VS Code, run <strong>Mochiii: Restart Daemon</strong> from the Command Palette, then <strong>Mochiii: Show Daemon Log</strong> if it still won't connect. In the terminal app, run <code>mochiii --stop</code> in the project folder and start <code>mochiii</code> again; its log is in the <code>logs</code> folder of your state directory (<code>~/.local/state/mochiii</code> on macOS/Linux, <code>%LOCALAPPDATA%\mochiii</code> on Windows).</p>
-              </div>
-            </details>
-
-            <details className="faq-item">
-              <summary>An MCP server won't start.</summary>
-              <div className="faq-answer">
-                <p><strong>Cause:</strong> most often the program that starts it isn't installed — <code>uv</code> or Docker, for example — or a key it needs isn't set. A first start can also take longer than Mochiii waits, for example while <code>npx</code> downloads the server.</p>
-                <p><strong>Fix:</strong> in the terminal app, <code>/mcp-server check &lt;name&gt;</code> starts the server and says whether it connected, and if not, why; add <code>--timeout 60</code> to wait longer. In VS Code, run <strong>Mochiii: Check MCP Server</strong>. Install the missing program, or set the key with <code>/mcp-server key</code> (terminal) or <strong>Set Key for MCP Server…</strong> (VS Code), then check again.</p>
-              </div>
-            </details>
-
-            <details className="faq-item">
-              <summary>How do I connect my API key?</summary>
-              <div className="faq-answer">
-                <p>Type <code>/connect</code> in the chat, or run <strong>Mochiii: Set API Key</strong> in VS Code. Mochiii supports 17 providers — OpenRouter, OpenAI, Anthropic, Google Gemini, NVIDIA, Groq, DeepSeek, xAI, Mistral, Together, Fireworks, Cerebras, Moonshot, Hugging Face, SambaNova, DashScope and Z.ai — and can usually tell which one from the key itself. The key is stored in a file in <code>~/.mochiii</code>, readable only by you, and used at once with no restart.</p>
-              </div>
-            </details>
-
-            <details className="faq-item">
-              <summary>Can I use a local model like Ollama or LM Studio?</summary>
-              <div className="faq-answer">
-                <p>Yes — Ollama, LM Studio, llama.cpp and vLLM are all supported. In the terminal app, pick <strong>On this computer</strong> from <code>/provider</code>, or run <code>/connect local</code>; no key is needed. In VS Code, set <code>mochiii.apiBase</code> to the server's URL (e.g. <code>http://localhost:11434/v1</code> for Ollama) and <code>mochiii.model</code> to the model name, then run <strong>Mochiii: Restart Daemon</strong>.</p>
-              </div>
-            </details>
-
-            <details className="faq-item">
-              <summary>Why is the chat shared between the editor and the terminal?</summary>
-              <div className="faq-answer">
-                <p>The VS Code extension and the terminal app both connect to the same background daemon, which serves every client of a workspace from one shared conversation — open both in the same folder and you'll see the same chat. To keep a chat, the mechanism is different per client: in VS Code, click the <strong>☆</strong> next to its name, or the star on its row in History, to pin it so it's never dropped by the 50-chat/20 MB limit. In the terminal, <code>/save [name]</code> keeps the current chat, and <code>/resume</code> or <code>/history</code> lists and reopens saved ones.</p>
-              </div>
-            </details>
-
-            <details className="faq-item">
-              <summary>I sent a message and nothing happened.</summary>
-              <div className="faq-answer">
-                <p><strong>Cause:</strong> usually the daemon isn't running, or the model provider returned an error or timed out.</p>
-                <p><strong>Fix:</strong> check the daemon is running (see above). In VS Code, check <strong>Mochiii: Show Daemon Log</strong> for the error; in the terminal app, check its log (see above).</p>
-              </div>
-            </details>
-
-            <details className="faq-item">
-              <summary>How do I clear or restart a conversation?</summary>
-              <div className="faq-answer">
-                <p>Type <code>/clear</code> to start a new chat, or <code>/compact</code> to summarise and shrink a long one. In VS Code, compacting saves the full chat to History first, so nothing already said is lost — click <strong>History</strong> (the clock button) to reopen it.</p>
-              </div>
-            </details>
-
-            <details className="faq-item">
-              <summary>The diff preview won't apply my edits.</summary>
-              <div className="faq-answer">
-                <p><strong>Cause:</strong> Mochiii's edit-safety checks require a change to match exactly one place in the file. If the file changed on disk after the edit was proposed, or the match is ambiguous, the apply is refused rather than guessed.</p>
-                <p><strong>Fix:</strong> review the diff; if it looks wrong, reject it and ask Mochiii to regenerate. Check <strong>Mochiii: Show Daemon Log</strong> for the conflict's detail.</p>
-              </div>
-            </details>
-
-            <details className="faq-item">
-              <summary>My attachments (PDF, Word, images) aren't reading.</summary>
-              <div className="faq-answer">
-                <p>In VS Code, attachments are read on your machine and turned into text, which is added to your prompt. That works for PDF (including scanned pages, by OCR), Word (.docx), Excel (.xlsx), PowerPoint (.pptx) and images. Old <code>.doc</code>/<code>.xls</code>/<code>.ppt</code> files and images with no readable text are refused with a message explaining why. Check <strong>Mochiii: Show Daemon Log</strong> for a parsing error, and file a bug if a file in a supported format still won't read.</p>
-              </div>
-            </details>
-
-            <details className="faq-item">
-              <summary>Where are my chat logs stored?</summary>
-              <div className="faq-answer">
-                <p>In your state directory: <code>~/.local/state/mochiii</code> on macOS and Linux (or <code>$XDG_STATE_HOME/mochiii</code> if you've set that), and <code>%LOCALAPPDATA%\mochiii</code> on Windows. Logs may contain file paths from your workspace. Mochiii removes its own API key from what it writes there.</p>
-              </div>
-            </details>
-          </div>
-        </section>
+        {GROUPS.map((g) => (
+          <section key={g.title} className="faq-group" aria-labelledby={`faq-${g.title}`}>
+            <h2 id={`faq-${g.title}`}>{g.title}</h2>
+            <div className="faq-list">
+              {g.items.map((item) => (
+                <details key={item.q} className="faq-item">
+                  <summary>{item.q}</summary>
+                  <div className="faq-answer">
+                    <p>{item.a}</p>
+                    {item.docs && (
+                      <p className="faq-docs">
+                        Docs: <a href={DOCS_URL + item.docs[1]} className="inline-link">{item.docs[0]}</a>
+                      </p>
+                    )}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </section>
+        ))}
       </div>
     </div>
   );

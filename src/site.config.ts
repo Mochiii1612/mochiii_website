@@ -5,6 +5,11 @@ export const INSTALL_COMMAND = 'npm install -g mochiii';
 /** One line under the command. Keep it to facts the release files back up. */
 export const INSTALL_NOTE = 'Needs Node.js 18 or later. The same command on every system.';
 
+/** Where people write to us. Each address is used everywhere from here. */
+export const SUPPORT_EMAIL = 'supportmochiii@gmail.com';
+/** Security reports only (three i's). */
+export const SECURITY_EMAIL = 'mochiiijuly@gmail.com';
+
 /** The documentation site, linked from the nav and the footer. */
 export const DOCS_URL = 'https://docs.mochiii.in';
 
