@@ -8,6 +8,22 @@ export const INSTALL_NOTE = 'Needs Node.js 18 or later. The same command on ever
 /** The documentation site, linked from the nav and the footer. */
 export const DOCS_URL = 'https://docs.mochiii.in';
 
+/** The VS Code extension: its Marketplace page, and the command that installs it. */
+export const MARKETPLACE_URL = 'https://marketplace.visualstudio.com/items?itemName=MochiiiAIAgent.mochiii-vscode';
+export const VSCODE_INSTALL_COMMAND = 'code --install-extension MochiiiAIAgent.mochiii-vscode';
+
+/**
+ * Footer social links. An icon is drawn only for an entry whose url is set,
+ * so a new channel is one line here. No GitHub entry: the site links to no
+ * GitHub page.
+ */
+export const SOCIAL_LINKS: ReadonlyArray<{ name: 'LinkedIn' | 'X' | 'Reddit' | 'Discord'; url: string }> = [
+  { name: 'LinkedIn', url: '' },
+  { name: 'X', url: '' },
+  { name: 'Reddit', url: '' },
+  { name: 'Discord', url: '' },
+];
+
 export const PROVIDERS = [
   'OpenRouter',
   'OpenAI',
@@ -27,9 +43,3 @@ export const PROVIDERS = [
   'DashScope',
   'Z.ai',
 ] as const;
-
-/**
- * Where the waitlist form posts `{ email }` as JSON (a Formspree, Buttondown or
- * similar endpoint). Empty means the form is not connected yet and says so.
- */
-export const WAITLIST_ENDPOINT = '';

@@ -1,29 +1,19 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
+import { INSTALL_ITEMS } from '../installItems';
 
-/** The pages behind "More" in the top navigation. */
-const ITEMS = [
-  { to: '/mcp', label: 'MCP Marketplace' },
-  { to: '/faq', label: 'FAQs' },
-  { to: '/supporters', label: 'Supporters' },
-];
-
-export default function MoreMenu() {
+export default function InstallMenu() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
-  const here = ITEMS.some((i) => i.to === location.pathname);
-
   // A new page closes the menu.
   useEffect(() => setOpen(false), [location.pathname, location.hash]);
 
-  // A click or tap anywhere outside closes it. A click inside an iframe (the
-  // home page's 3D viewer is one) never reaches this document, but it does take
-  // focus from the window, so that closes it too.
+  // A click or tap anywhere outside closes it, and so does the window losing focus.
   useEffect(() => {
     if (!open) return;
     const onDown = (e: PointerEvent) => {
@@ -39,7 +29,7 @@ export default function MoreMenu() {
   }, [open]);
 
   const focusItem = (i: number) => {
-    const n = ITEMS.length;
+    const n = INSTALL_ITEMS.length;
     itemRefs.current[((i % n) + n) % n]?.focus();
   };
 
@@ -47,7 +37,7 @@ export default function MoreMenu() {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
       setOpen(true);
-      const first = e.key === 'ArrowDown' ? 0 : ITEMS.length - 1;
+      const first = e.key === 'ArrowDown' ? 0 : INSTALL_ITEMS.length - 1;
       requestAnimationFrame(() => focusItem(first));
     } else if (e.key === 'Escape' && open) {
       setOpen(false);
@@ -67,7 +57,7 @@ export default function MoreMenu() {
       focusItem(0);
     } else if (e.key === 'End') {
       e.preventDefault();
-      focusItem(ITEMS.length - 1);
+      focusItem(INSTALL_ITEMS.length - 1);
     } else if (e.key === 'Escape') {
       e.preventDefault();
       setOpen(false);
@@ -78,37 +68,42 @@ export default function MoreMenu() {
   };
 
   return (
-    <div className="nav-more" ref={wrapRef}>
+    <div className="nav-install" ref={wrapRef}>
       <button
         ref={buttonRef}
         type="button"
-        className={`nav-link nav-more-btn ${here ? 'active' : ''}`}
+        className="nav-cta"
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-controls="nav-more-menu"
+        aria-controls="nav-install-menu"
         onClick={() => setOpen((o) => !o)}
         onKeyDown={onButtonKey}
       >
-        More
-        <ChevronDown size={14} className={`nav-more-chevron ${open ? 'open' : ''}`} aria-hidden="true" />
+        Install
+        <ChevronDown size={14} className={`nav-install-chevron ${open ? 'open' : ''}`} aria-hidden="true" />
       </button>
       {open && (
-        <div id="nav-more-menu" className="nav-more-menu" role="menu" aria-label="More" onKeyDown={onMenuKey}>
-          {ITEMS.map((item, i) => (
-            <Link
-              key={item.to}
-              ref={(el) => {
-                itemRefs.current[i] = el;
-              }}
-              to={item.to}
-              role="menuitem"
-              className="nav-more-item"
-              aria-current={location.pathname === item.to ? 'page' : undefined}
-              onClick={() => setOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
+        <div id="nav-install-menu" className="nav-install-menu" role="menu" aria-label="Install" onKeyDown={onMenuKey}>
+          {INSTALL_ITEMS.map((item, i) => {
+            const body = (
+              <>
+                <span className="nav-install-label">{item.label}</span>
+                <span className="nav-install-detail">{item.detail}</span>
+              </>
+            );
+            const ref = (el: HTMLAnchorElement | null) => {
+              itemRefs.current[i] = el;
+            };
+            return 'href' in item ? (
+              <a key={item.key} ref={ref} href={item.href} role="menuitem" className="nav-install-item">
+                {body}
+              </a>
+            ) : (
+              <Link key={item.key} ref={ref} to={item.to} role="menuitem" className="nav-install-item" onClick={() => setOpen(false)}>
+                {body}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
