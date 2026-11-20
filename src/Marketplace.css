@@ -2,32 +2,32 @@
 
 .mkt-page {
   min-height: 100vh;
-  padding-top: 80px;
 }
 
+/* A short intro: at 1440x900 the search box and the first cards are in view. */
 .mkt-hero {
-  padding: 60px 0 36px;
+  padding: 44px 0 24px;
   text-align: center;
   background: linear-gradient(180deg, rgba(194, 67, 107, 0.03) 0%, transparent 100%);
   border-bottom: 1px solid var(--glass-border);
 }
 
 .mkt-title {
-  font-size: clamp(2.4rem, 5vw, 3.4rem);
-  margin-bottom: 18px;
+  font-size: clamp(2.1rem, 4.5vw, 2.9rem);
+  margin-bottom: 10px;
   letter-spacing: -0.03em;
 }
 
 .mkt-subtitle {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: var(--text-secondary);
-  max-width: 760px;
+  max-width: 640px;
   margin: 0 auto;
-  line-height: 1.7;
+  line-height: 1.6;
 }
 
 .mkt-body {
-  padding-top: 40px;
+  padding-top: 24px;
   padding-bottom: 80px;
 }
 
@@ -35,13 +35,13 @@
 .mkt-safety {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 .mkt-safety > div {
   display: flex;
-  gap: 12px;
-  padding: 18px;
+  gap: 10px;
+  padding: 12px 14px;
   border-radius: 12px;
   background: rgba(194, 67, 107, 0.04);
   border: 1px solid rgba(194, 67, 107, 0.15);
@@ -52,9 +52,9 @@
   margin-top: 2px;
 }
 .mkt-safety p {
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   color: var(--text-secondary);
-  line-height: 1.55;
+  line-height: 1.5;
 }
 .mkt-safety strong {
   color: var(--text-primary);
@@ -316,15 +316,53 @@
   font-weight: 600;
 }
 
+/* The line "Copy for terminal" copies, shown whole: a long one wraps, never cut. */
+.mkt-cmd-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.mkt-cmd-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
 .mkt-cmd {
   display: block;
-  font-size: 0.78rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.76rem;
+  line-height: 1.55;
   padding: 10px 12px;
   border-radius: 8px;
   background: var(--ink);
   color: var(--bg-tertiary);
-  overflow-x: auto;
-  white-space: nowrap;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* The image digest, behind "Details". */
+.mkt-details {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.mkt-details summary {
+  cursor: pointer;
+  width: fit-content;
+  font-weight: 600;
+}
+.mkt-details summary:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+.mkt-details p {
+  margin: 6px 0 4px;
+}
+.mkt-digest {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 .mkt-actions {
@@ -479,6 +517,10 @@
 @media (max-width: 620px) {
   .mkt-grid {
     grid-template-columns: 1fr;
+  }
+  /* "Open in VS Code" opens the editor on this device; a phone has none. */
+  .mkt-vscode-btn {
+    display: none;
   }
   /* On a phone the dialog is a full-width sheet from the bottom. */
   .mkt-modal-backdrop {

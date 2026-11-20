@@ -5,7 +5,6 @@ import {
   type CatalogFile,
   type CatalogServer,
   RUNTIME,
-  commandLine,
   loadCatalog,
   matches,
   terminalCommand,
@@ -43,7 +42,7 @@ function CopyButton({ text, label }: { text: string; label: string }) {
       aria-label={label}
     >
       {copied ? <Check size={14} /> : <Copy size={14} />}
-      <span>{copied ? 'Copied' : 'Terminal'}</span>
+      <span>{copied ? 'Copied' : 'Copy for terminal'}</span>
     </button>
   );
 }
@@ -96,12 +95,41 @@ function ServerCard({ server, onOpen }: { server: CatalogServer; onOpen: (el: HT
   );
 }
 
+/**
+ * A container image is pinned by digest (`name@sha256:…`). The dialog shows the
+ * name and version, and keeps the digest behind "Details".
+ */
+function splitDigest(identifier: string): { name: string; digest: string | null } {
+  const at = identifier.indexOf('@sha256:');
+  return at < 0 ? { name: identifier, digest: null } : { name: identifier.slice(0, at), digest: identifier.slice(at + 1) };
+}
+
+/** The site links to no github.com page, so a server whose homepage is on GitHub links to its package page instead, or to nothing. */
+function isGitHub(url: string | undefined): boolean {
+  if (!url) return false;
+  try {
+    const host = new URL(url).hostname;
+    return host === 'github.com' || host.endsWith('.github.com');
+  } catch {
+    return false;
+  }
+}
+
+function outsideLink(server: CatalogServer): { url: string; label: string } | null {
+  if (server.homepage && !isGitHub(server.homepage)) return { url: server.homepage, label: 'Homepage' };
+  if (server.package.url && !isGitHub(server.package.url)) return { url: server.package.url, label: 'Package' };
+  return null;
+}
+
 const FOCUSABLE = 'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])';
 
 function ServerDialog({ server, onClose }: { server: CatalogServer; onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const titleId = `mkt-dialog-title-${server.id}`;
+  const cmdId = `mkt-dialog-cmd-${server.id}`;
+  const pkg = splitDigest(server.package.identifier);
+  const outLink = outsideLink(server);
 
   // The page behind does not scroll while the dialog is open.
   useEffect(() => {
@@ -179,10 +207,17 @@ function ServerDialog({ server, onClose }: { server: CatalogServer; onClose: () 
 
         <div className="mkt-meta">
           <span>
-            <Package size={13} /> {server.package.registry} · {server.package.identifier} {server.package.version}
+            <Package size={13} /> {server.package.registry} · {pkg.name} {server.package.version}
           </span>
           <span>Needs {RUNTIME[server.package.registry]}</span>
         </div>
+        {pkg.digest && (
+          <details className="mkt-details">
+            <summary>Details</summary>
+            <p>Image digest</p>
+            <code className="mkt-digest">{pkg.digest}</code>
+          </details>
+        )}
 
         {server.env.length > 0 && (
           <ul className="mkt-env" aria-label="Variables it reads">
@@ -196,19 +231,24 @@ function ServerDialog({ server, onClose }: { server: CatalogServer; onClose: () 
           </ul>
         )}
 
-        <code className="mkt-cmd" title="Exactly what runs" tabIndex={0}>
-          {commandLine(server)}
-        </code>
+        <div className="mkt-cmd-block">
+          <span className="mkt-cmd-label" id={cmdId}>
+            Paste into Mochiii's terminal app
+          </span>
+          <code className="mkt-cmd" aria-labelledby={cmdId} tabIndex={0}>
+            {terminalCommand(server)}
+          </code>
+        </div>
 
         <footer className="mkt-actions">
           <CopyButton text={terminalCommand(server)} label={`Copy the terminal command that adds ${server.name}`} />
-          <a className="mkt-btn mkt-btn-quiet" href={vscodeInstallLink(server)}>
+          <a className="mkt-btn mkt-btn-quiet mkt-vscode-btn" href={vscodeInstallLink(server)}>
             <Puzzle size={14} />
             <span>Open in VS Code</span>
           </a>
-          {(server.homepage ?? server.package.url) && (
-            <a className="mkt-link" href={server.homepage ?? server.package.url} target="_blank" rel="noreferrer noopener">
-              {server.homepage ? 'Homepage' : 'Package'}
+          {outLink && (
+            <a className="mkt-link" href={outLink.url} target="_blank" rel="noreferrer noopener">
+              {outLink.label}
               <ExternalLink size={12} />
             </a>
           )}
@@ -255,8 +295,8 @@ export default function Marketplace() {
             MCP <span className="text-gradient">Marketplace</span>
           </h1>
           <p className="mkt-subtitle">
-            Servers you can give Mochiii's agent: search, browsers, databases, clouds and more. Add one from Mochiii's terminal app or from VS Code —
-            Mochiii shows you exactly what will run and asks you to type its name before anything is added.
+            Servers you can give Mochiii's agent. Mochiii shows you what will run, and you type the server's name before
+            anything is added.
           </p>
         </div>
       </section>
