@@ -134,9 +134,9 @@
   .nav-panel-detail { display: block; font-size: 0.8rem; font-weight: 400; color: #71717a; overflow-wrap: anywhere; }
 }
 
-/* ═══ HERO — two-column: copy left, 3D lotus splat right ═══ */
+/* ═══ HERO — two-column: copy left, screenshots right ═══ */
 .hero {
-  flex: 1; padding: 92px 0 24px; position: relative; z-index: 5;
+  flex: 1; padding-top: 92px; padding-bottom: 24px; position: relative; z-index: 5;
 }
 .hero-layout {
   display: flex; align-items: center; gap: 56px;
@@ -192,29 +192,11 @@
 }
 .install-box-footer a { display: inline-flex; align-items: center; gap: 2px; color: var(--accent-primary); font-weight: 600; }
 
-/* ── Hero stage: the 3D lotus splat, staged on the right with a soft glow ── */
-.hero-stage {
-  position: relative;
-  flex: 1 1 0; min-width: 0;
-  margin: 0;
-  display: flex; justify-content: center;
-}
-.hero-stage-glow {
-  position: absolute; inset: -60px;
-  background: radial-gradient(circle at center, rgba(194,67,107,0.16), transparent 70%);
-  filter: blur(40px);
-  pointer-events: none; z-index: 0;
-}
-.splat-container {
-  position: relative; z-index: 1;
-  width: 100%;
-  height: clamp(340px, 38vw, 520px);
-  display: flex; flex-direction: column;
-}
-.splat-iframe {
-  flex: 1; width: 100%; height: 100%;
-  border: none; background: transparent;
-}
+/* ── Hero: buttons, and two real screenshots (VS Code, terminal app) ── */
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.hero-actions .btn { padding: 12px 22px; }
+.hero-shots { position: relative; flex: 1.25 1 0; min-width: 0; margin: 0; padding-bottom: 92px; }
+.hero-shots figcaption { position: absolute; left: 0; bottom: 0; max-width: 30%; font-size: 0.75rem; line-height: 1.45; color: var(--text-secondary); }
 
 /* Features — borderless list (deliberately not a card grid, see gates/architecture) */
 .features-section { padding: 80px 0; position: relative; z-index: 5; }
@@ -270,7 +252,7 @@
   .hero-layout { flex-direction: column; gap: 40px; }
   .hero-copy { align-items: center; text-align: center; }
   .hero-sub { max-width: 600px; }
-  .hero-stage { width: 100%; max-width: 620px; }
+  .hero-shots { width: 100%; max-width: 680px; }
 }
 
 @media (max-width: 768px) {

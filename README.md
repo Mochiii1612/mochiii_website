@@ -12,11 +12,11 @@ npm run lint
 ## Keeping the page accurate
 
 - `src/site.config.ts` holds the install commands, the provider list and the footer's social links (an icon shows only when its URL is set).
-- The "Good to know" section on the home page carries the caveats (prompts go to the model provider, VS Code auto mode, platform coverage, unsigned binaries, licence). When a release changes any of them, update the sentence rather than leaving it stale.
+- The home page's platform line comes from `PLATFORMS` in `src/site.config.ts`; the proof strip counts the verified servers in `public/api/mcp/v1/catalog.json` at build time. The caveats that used to be in "Good to know" are on the FAQ page.
 
-## The lotus
+## Screenshots
 
-The 3D lotus is a standalone viewer in `public/spz-viewer/`, loaded as an iframe by the hero in `src/pages/Home.tsx`. It is built separately; leave it alone unless you are changing the scene.
+The home page's screenshots in `src/assets/shots/` are real captures of Mochiii 1.6.0 answering with a model on the same computer (qwen2.5-coder:7b in Ollama), in the terminal app and in VS Code. Replace them with new captures when the product's look changes; never with mock-ups.
 
 ## Still to fill in
 

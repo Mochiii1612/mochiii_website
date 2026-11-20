@@ -1,10 +1,38 @@
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle, Eye, FileCode, Lock, Save, Sparkles } from 'lucide-react';
+import {
+  ArrowRight,
+  BookOpen,
+  CheckCircle,
+  Eye,
+  FileCode,
+  Gauge,
+  Lock,
+  Paperclip,
+  Save,
+  Users,
+  History,
+  Monitor,
+  Terminal,
+} from 'lucide-react';
 import { useReveal } from '../hooks';
-import InstallTabs from '../components/InstallTabs';
+import CopyCommand from '../components/CopyCommand';
 import ProviderLogos from '../components/ProviderLogos';
-import { PROVIDERS } from '../site.config';
+import {
+  DOCS_URL,
+  INSTALL_COMMAND,
+  MARKETPLACE_URL,
+  NODE_REQUIREMENT,
+  PLATFORMS,
+  PROVIDERS,
+  VSCODE_INSTALL_COMMAND,
+} from '../site.config';
+import heroVscode from '../assets/shots/hero-vscode.webp';
+import heroTerminal from '../assets/shots/hero-terminal.webp';
+import shotCodebase from '../assets/shots/feature-codebase.webp';
+import shotReview from '../assets/shots/feature-review.webp';
+import shotTasks from '../assets/shots/feature-tasks.webp';
+import shotTools from '../assets/shots/feature-tools.webp';
 
 /** Drop-in `<div>` replacement that fades/slides into view on scroll. */
 function Reveal({ children, className = '' }: { children: ReactNode; className?: string }) {
@@ -16,32 +44,7 @@ function Reveal({ children, className = '' }: { children: ReactNode; className?:
   );
 }
 
-const features = [
-  {
-    title: 'Knows your codebase',
-    body: 'Your project is indexed and searched on your own computer, so answers come from your code.',
-  },
-  {
-    title: 'Safer edits',
-    body: 'Every change is checked and backed up before it lands, and you can undo a whole run.',
-  },
-  {
-    title: 'Agent mode',
-    body: 'Off by default. When you turn it on, every tool call waits for your approval.',
-  },
-  {
-    title: 'Any model',
-    body: `${PROVIDERS.length} providers, or a model server running on your own computer.`,
-  },
-  {
-    title: 'Terminal and VS Code',
-    body: 'The same agent in your terminal and in a VS Code extension.',
-  },
-  {
-    title: 'Plan before you edit',
-    body: 'Plan mode reads your code and proposes changes without touching a file.',
-  },
-];
+const MCP_VERIFIED = __MCP_VERIFIED_COUNT__;
 
 const gates = [
   { label: 'Path safety', icon: <Lock size={22} />, body: 'Edits stay inside your workspace. Credential and startup files are refused.' },
@@ -51,39 +54,96 @@ const gates = [
   { label: 'Backup', icon: <Save size={22} />, body: 'Files are copied aside before they change, so a run can be undone.' },
 ];
 
-const goodToKnow = [
+const smallFeatures = [
   {
-    title: 'VS Code starts in auto mode',
-    body: 'Edits apply as they arrive, still checked and undoable. Switch to manual in settings to approve each one.',
+    icon: <BookOpen size={18} />,
+    title: 'Rules that stick',
+    body: (
+      <>
+        <code>/remember tests here run with make check</code> saves a rule for the project, and every later chat follows
+        it.
+      </>
+    ),
   },
   {
-    title: 'Platform support varies',
-    body: 'The VS Code extension is for Linux x64 and Windows x64. Other platforms use the terminal app.',
+    icon: <Gauge size={18} />,
+    title: 'Spending limits',
+    body: (
+      <>
+        <code>/usage</code> shows tokens and cost from your provider's own bill. When a session or a day reaches its
+        limit (<code>/budget</code>), Mochiii stops and asks before going on.
+      </>
+    ),
   },
   {
-    title: 'Syntax checking is limited',
-    body: 'Go is fully parsed. Other languages get a lighter check or none.',
+    icon: <Paperclip size={18} />,
+    title: 'Files in VS Code',
+    body: <>Attach PDFs (scanned ones too), Word, Excel, PowerPoint and images. They are read on your machine.</>,
   },
   {
-    title: 'Binaries are not code-signed',
-    body: 'Installers verify checksums. Windows may show a SmartScreen warning.',
+    icon: <Users size={18} />,
+    title: 'A team on one question',
+    body: (
+      <>
+        <code>/team</code>: a researcher and a coder work on your question together.
+      </>
+    ),
   },
   {
-    title: 'Proprietary licence',
-    body: 'Mochiii is not open source.',
+    icon: <History size={18} />,
+    title: 'Keep and reopen chats',
+    body: (
+      <>
+        Each launch of the terminal app starts a new chat. <code>/save</code> keeps one, and <code>/resume</code> reopens
+        it.
+      </>
+    ),
   },
 ];
+
+function Shot({ src, alt, w, h, className = '' }: { src: string; alt: string; w: number; h: number; className?: string }) {
+  return (
+    <div className={`shot ${className}`}>
+      <img src={src} alt={alt} width={w} height={h} loading="lazy" decoding="async" />
+    </div>
+  );
+}
+
+function FeatureBlock({
+  id,
+  title,
+  children,
+  shot,
+  flip = false,
+}: {
+  id: string;
+  title: string;
+  children: ReactNode;
+  shot: ReactNode;
+  flip?: boolean;
+}) {
+  return (
+    <section id={id} className="feature-block container" aria-labelledby={`${id}-title`}>
+      <Reveal className={`feature-block-inner${flip ? ' flip' : ''}`}>
+        <div className="feature-block-copy">
+          <h2 id={`${id}-title`}>{title}</h2>
+          {children}
+        </div>
+        <div className="feature-block-shot">{shot}</div>
+      </Reveal>
+    </section>
+  );
+}
 
 export default function Home() {
   return (
     <>
-      {/* Hero: copy and install on the left, the 3D lotus splat on the right (unchanged) */}
-      <header id="install" className="hero container">
+      {/* ═══ HERO ═══ */}
+      <header className="hero container">
         <div className="hero-layout">
           <div className="hero-copy">
             <div className="hero-badge animate-fade">
-              <Sparkles size={14} />
-              <span>Terminal app + VS Code extension</span>
+              <span>Beta · Terminal app + VS Code extension</span>
             </div>
 
             <h1 className="hero-title">
@@ -93,51 +153,99 @@ export default function Home() {
             </h1>
 
             <p className="hero-sub">
-              Mochiii indexes your project on your own machine, checks every edit before it lands, and lets
-              you undo it.
+              Mochiii reads your project, answers questions about it, writes and fixes code, runs your tests, and works
+              through long tasks.
             </p>
 
-            <InstallTabs />
-          </div>
-
-          {/* Staged 3D Gaussian Splat Viewer: the hero's visual, right side */}
-          <div className="hero-stage">
-            <div className="hero-stage-glow" aria-hidden="true" />
-            <div className="splat-container">
-              <iframe src="/spz-viewer/index.html" title="3D Splat Viewer" className="splat-iframe" />
+            <div className="hero-actions">
+              <a href={MARKETPLACE_URL} className="btn btn-primary">
+                <Monitor size={16} aria-hidden="true" />
+                Install for VS Code
+              </a>
+              <Link to="/#install-npm" className="btn btn-secondary">
+                <Terminal size={16} aria-hidden="true" />
+                Terminal app
+              </Link>
             </div>
           </div>
+
+          <figure className="hero-shots">
+            <Shot
+              src={heroVscode}
+              w={1056}
+              h={832}
+              className="shot-vscode"
+              alt="Mochiii in VS Code: asked what checkout() returns, it answers beside the open checkout.js file."
+            />
+            <Shot
+              src={heroTerminal}
+              w={1100}
+              h={680}
+              className="shot-terminal"
+              alt="Mochiii's terminal app answering where an order total is worked out, and quoting the code it found in src/checkout.js."
+            />
+            <figcaption>Mochiii 1.6.0 with qwen2.5-coder:7b, a model running on the same computer.</figcaption>
+          </figure>
         </div>
       </header>
 
-      {/* ═══ FEATURES ═══ */}
-      <section id="features" className="section-tight container">
-        <Reveal className="section-header">
-          <h2>What is Mochiii?</h2>
-          <p className="text-secondary">
-            An AI coding agent for your terminal and VS Code, built around your own codebase.
-          </p>
-        </Reveal>
-
-        <Reveal className="features-list">
-          {features.map((f) => (
-            <div key={f.title} className="feature-row">
-              <div className="feature-row-heading">
-                <span className="feature-dot" aria-hidden="true" />
-                <h3>{f.title}</h3>
-              </div>
-              <p>{f.body}</p>
-            </div>
-          ))}
-        </Reveal>
+      {/* ═══ PROOF STRIP ═══ */}
+      <section className="proof-strip container" aria-label="Mochiii at a glance">
+        <ul>
+          <li>VS Code + terminal</li>
+          <li>{PROVIDERS.length} model providers or a local model</li>
+          <li>
+            <Link to="/mcp">{MCP_VERIFIED} verified MCP servers</Link>
+          </li>
+        </ul>
       </section>
 
-      {/* ═══ EDIT SAFETY ═══ */}
-      <section id="edits" className="gates-section container">
-        <Reveal className="section-header">
-          <h2>Every edit passes five checks.</h2>
-        </Reveal>
+      {/* ═══ FOUR FEATURE BLOCKS ═══ */}
+      <FeatureBlock
+        id="codebase"
+        title="Knows your codebase"
+        shot={
+          <Shot
+            src={shotCodebase}
+            w={1100}
+            h={558}
+            alt="The terminal app answering how an order total is worked out, step by step, and listing the four files involved."
+          />
+        }
+      >
+        <p>
+          Mochiii indexes your project on your machine and finds the code that matters for each question. The index
+          updates as you save, so answers match the code you have now.
+        </p>
+      </FeatureBlock>
 
+      <FeatureBlock
+        id="edits"
+        title="You review every edit"
+        flip
+        shot={
+          <Shot
+            src={shotReview}
+            w={1100}
+            h={721}
+            alt="An edit to src/checkout.js shown as a diff in the terminal app, waiting for y apply, n skip or q cancel remaining."
+          />
+        }
+      >
+        <p>
+          In the terminal app, each change shows up as a diff: apply or skip it, and an applied change can be undone in
+          one step.
+        </p>
+        <p>
+          In VS Code a chat starts in <strong>auto</strong> mode: edits apply as they arrive, each still checked and
+          undoable. Switch it to <strong>manual</strong> and every edit waits for your Apply.
+        </p>
+      </FeatureBlock>
+
+      <section className="gates-section container" aria-labelledby="gates-title">
+        <Reveal className="section-header">
+          <h2 id="gates-title">Every edit passes five checks.</h2>
+        </Reveal>
         <Reveal className="gates-grid gates-grid--five">
           {gates.map((gate, idx) => (
             <div key={gate.label} className="gate-card glass-panel">
@@ -150,44 +258,159 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* ═══ MODELS ═══ */}
-      <section id="models" className="section-tight container">
-        <Reveal className="section-header">
-          <h2>Bring your own model.</h2>
-          <p className="text-secondary">{PROVIDERS.length} providers with your own key, or a model running on your own computer.</p>
-        </Reveal>
+      <FeatureBlock
+        id="tasks"
+        title="Long tasks and specs"
+        shot={
+          <Shot
+            src={shotTasks}
+            w={1100}
+            h={335}
+            alt="The terminal app's command menu with /fix typed: find and fix a bug, a long task."
+          />
+        }
+      >
+        <p>
+          <code>/debug</code>, <code>/fix</code> and <code>/refactor</code> handle work that is too big for one reply.
+          Mochiii reproduces the problem, fixes it at the root, and finishes only when the build or tests pass.{' '}
+          <code>/hunt</code> looks for real bugs and proves each one with a failing run.
+        </p>
+        <p>
+          <code>/spec</code> writes down what you want built. <code>/spec build</code> builds it tests-first, and{' '}
+          <code>/spec check</code> grades the result against the spec.
+        </p>
+        <p className="feature-block-note">
+          Every task has a time and spend budget, and you can pause it and pick it up later. Long tasks and specs need
+          agent mode, so a model that can use tools.
+        </p>
+      </FeatureBlock>
 
+      <FeatureBlock
+        id="tools"
+        title="Tools: agent mode, MCP and GitHub"
+        flip
+        shot={
+          <Shot
+            src={shotTools}
+            w={592}
+            h={664}
+            className="shot-narrow"
+            alt="The MCP Marketplace inside VS Code: 49 verified servers, with Filesystem and Git cards and their Add buttons."
+          />
+        }
+      >
+        <p>
+          <strong>Agent mode.</strong> Mochiii can read files, search, run commands and tests, and look things up on the
+          web. Anything that changes a file or runs a command waits for your approval, and an answer that used the web
+          lists the pages it read. In the terminal app it is on with a provider's key, and a model on your computer gets
+          tools only after <code>/agent on</code>. In VS Code, auto mode applies edits as they arrive.
+        </p>
+        <p>
+          <strong>MCP servers.</strong> <code>/mcp</code> opens a panel of your servers: paste the JSON from a server's
+          setup page, or pick one of the {MCP_VERIFIED} in the <Link to="/mcp" className="inline-link">MCP Marketplace</Link>.
+        </p>
+        <p>
+          <strong>GitHub.</strong> Read issues and pull requests, and see why CI failed, without leaving the chat:{' '}
+          <code>/issue 104</code>, <code>/pr 31 log</code>.
+        </p>
+      </FeatureBlock>
+
+      {/* ═══ SMALLER FEATURES ═══ */}
+      <section className="section-tight container" aria-labelledby="more-title">
+        <Reveal className="section-header">
+          <h2 id="more-title">And the small things.</h2>
+        </Reveal>
+        <Reveal className="small-grid">
+          {smallFeatures.map((f) => (
+            <div key={f.title} className="small-card">
+              <div className="small-card-head">
+                <span className="small-card-icon" aria-hidden="true">{f.icon}</span>
+                <h3>{f.title}</h3>
+              </div>
+              <p>{f.body}</p>
+            </div>
+          ))}
+        </Reveal>
+      </section>
+
+      {/* ═══ ANY MODEL ═══ */}
+      <section id="models" className="section-tight container" aria-labelledby="models-title">
+        <Reveal className="section-header">
+          <h2 id="models-title">Works with any model.</h2>
+          <p className="text-secondary">
+            {PROVIDERS.length} providers with your own key, or a model server on your computer: Ollama, LM Studio,
+            llama.cpp or vLLM, with no key.
+          </p>
+        </Reveal>
         <Reveal>
           <ProviderLogos />
         </Reveal>
       </section>
 
-      {/* ═══ PRIVACY ═══ */}
-      <section id="privacy" className="section-tight container">
+      {/* ═══ WHERE YOUR CODE GOES ═══ */}
+      <section id="your-code" className="section-tight container" aria-labelledby="code-title">
         <Reveal className="section-header">
-          <h2>You choose where your code goes.</h2>
-          <p className="text-secondary">
-            Your codebase is indexed, embedded and searched on your own computer. Only your prompt, with the
-            code it needs, goes to the model provider you choose. Use a local model and it goes nowhere. Your
-            API keys stay on your computer, and known secret patterns are scrubbed from prompts before they
-            are sent.
-          </p>
+          <h2 id="code-title">Where your code goes.</h2>
+          <p className="text-secondary">What reaches a model provider depends on the model you pick.</p>
+        </Reveal>
+        <Reveal className="code-facts">
+          <ul>
+            <li>Your code is indexed and searched on your own machine. Nothing is uploaded to build the index.</li>
+            <li>
+              Your question, and the parts of your code that answer it, go only to the model provider you chose. Text that
+              looks like an API key is masked before it leaves.
+            </li>
+            <li>Keys are stored on your machine, readable only by you, and sent only to the provider that issued them.</li>
+            <li>Nothing on your machine listens on the network.</li>
+          </ul>
         </Reveal>
       </section>
 
-      {/* ═══ GOOD TO KNOW ═══ */}
-      <section id="limits" className="section-tight container">
+      {/* ═══ INSTALL + PLATFORMS ═══ */}
+      <section id="install" className="section-tight container" aria-labelledby="install-title">
         <Reveal className="section-header">
-          <h2>Good to know.</h2>
+          <h2 id="install-title">Install.</h2>
         </Reveal>
-
-        <Reveal className="limits">
-          {goodToKnow.map((item) => (
-            <div key={item.title} className="limit">
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
+        <Reveal className="install-options">
+          <div className="install-box" id="install-vscode">
+            <div className="install-box-label">
+              <Monitor size={13} aria-hidden="true" />
+              <span>VS Code extension</span>
             </div>
-          ))}
+            <div className="install-box-body">
+              <a href={MARKETPLACE_URL} className="btn btn-primary install-box-btn">
+                Install from the VS Code Marketplace
+              </a>
+              <p className="install-or">or from a terminal:</p>
+            </div>
+            <CopyCommand command={VSCODE_INSTALL_COMMAND} label="Copy the VS Code install command" />
+          </div>
+
+          <div className="install-box" id="install-npm">
+            <div className="install-box-label">
+              <Terminal size={13} aria-hidden="true" />
+              <span>Terminal app, with npm</span>
+            </div>
+            <div className="install-box-body">
+              <p className="install-or">The same command on every system. {NODE_REQUIREMENT}</p>
+            </div>
+            <CopyCommand command={INSTALL_COMMAND} label="Copy the npm install command" />
+            <div className="install-box-footer install-note">
+              <span>
+                Then run <code>mochiii</code> in a project folder.
+              </span>
+            </div>
+          </div>
+        </Reveal>
+        <Reveal className="platforms">
+          <p>{PLATFORMS.terminal}</p>
+          <p>
+            {PLATFORMS.vscode} {PLATFORMS.note}
+          </p>
+          <p>
+            Using both? Keep them on the same version.{' '}
+            <a href={`${DOCS_URL}/troubleshooting`} className="inline-link">Why</a>
+          </p>
         </Reveal>
       </section>
 
@@ -196,13 +419,14 @@ export default function Home() {
         <Reveal className="container final-cta-inner">
           <h2>Ready to try it?</h2>
           <div className="final-cta-actions">
-            <a href="#install" className="btn btn-primary final-cta-btn">
-              Install <ArrowRight size={16} />
+            <a href={MARKETPLACE_URL} className="btn btn-primary final-cta-btn">
+              Install for VS Code <ArrowRight size={16} />
             </a>
-            <Link to="/support" className="btn btn-secondary final-cta-btn">
-              Support
+            <Link to="/#install-npm" className="btn btn-secondary final-cta-btn">
+              Terminal app
             </Link>
           </div>
+          <a href={DOCS_URL} className="inline-link final-cta-docs">Read the docs</a>
         </Reveal>
       </section>
     </>
