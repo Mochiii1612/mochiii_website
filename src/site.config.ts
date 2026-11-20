@@ -1,9 +1,14 @@
 /** Everything on the site that goes stale when a release ships lives here. */
-export const INSTALL_STATEMENT = 'One command installs Mochiii on any OS.';
-export const INSTALL_OSES = ['macOS', 'Linux', 'Windows'];
+/** The terminal app, installed with npm. */
 export const INSTALL_COMMAND = 'npm install -g mochiii';
-/** One line under the command. Keep it to facts the release files back up. */
-export const INSTALL_NOTE = 'Needs Node.js 18 or later. The same command on every system.';
+export const NODE_REQUIREMENT = 'Needs Node.js 18 or later.';
+
+/** Where each client runs (core README, "Platform support"). */
+export const PLATFORMS = {
+  terminal: 'Terminal app: Linux x64 and ARM64, macOS on Apple Silicon, and Windows x64 (Windows on ARM runs it through emulation).',
+  vscode: 'VS Code extension: Linux x64 and Windows x64.',
+  note: 'Intel Macs are not supported.',
+} as const;
 
 /** The documentation site, linked from the nav and the footer. */
 export const DOCS_URL = 'https://docs.mochiii.in';
