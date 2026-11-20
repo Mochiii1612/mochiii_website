@@ -18,6 +18,6 @@ npm run lint
 
 The home page's screenshots in `src/assets/shots/` are real captures of Mochiii 1.6.0 answering with a model on the same computer (qwen2.5-coder:7b in Ollama), in the terminal app and in VS Code. Replace them with new captures when the product's look changes; never with mock-ups.
 
-## Still to fill in
+## Contact addresses
 
-`src/pages/Support.tsx` still contains unfilled `[[...]]` template placeholders (security contact, response times, docs URL, and others). They need real answers from the maintainer.
+The support and security email addresses are `SUPPORT_EMAIL` and `SECURITY_EMAIL` in `src/site.config.ts`; the Support and FAQ pages read them from there.

@@ -10,6 +10,11 @@ export const PLATFORMS = {
   note: 'Intel Macs are not supported.',
 } as const;
 
+/** Where people write to us. Each address is used everywhere from here. */
+export const SUPPORT_EMAIL = 'supportmochiii@gmail.com';
+/** Security reports only (three i's). */
+export const SECURITY_EMAIL = 'mochiiijuly@gmail.com';
+
 /** The documentation site, linked from the nav and the footer. */
 export const DOCS_URL = 'https://docs.mochiii.in';
 
