@@ -1,4 +1,7 @@
 /** Everything on the site that goes stale when a release ships lives here. */
+/** Current releases, and the rule between them (core clients/vscode/README.md, Requirements). */
+export const VERSIONS = { terminal: '1.6.1', extension: '1.0.1' } as const;
+
 /** The terminal app, installed with npm. */
 export const INSTALL_COMMAND = 'npm install -g mochiii';
 export const NODE_REQUIREMENT = 'Needs Node.js 18 or later.';

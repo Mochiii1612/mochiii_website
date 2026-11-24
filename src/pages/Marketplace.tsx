@@ -313,8 +313,9 @@ export default function Marketplace() {
           <div>
             <ShieldCheck size={18} />
             <p>
-              <strong>Every tool call asks.</strong> Each tool a server offers waits for your yes, and every call is in the audit
-              log.
+              <strong>You decide what runs.</strong> A server's tool waits for your yes in Manual and in the terminal app. In
+              VS Code's Auto, only a tool the server marks read-only runs without asking, and the terminal's{' '}
+              <code>/auto</code> says yes for you while it is on. Every call is in the audit log.
             </p>
           </div>
           <div>
