@@ -6,17 +6,6 @@
   overflow-x: clip;
 }
 
-.grid-background {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image:
-    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
-
 /* Single, restrained glow behind the hero — replaces the old dual-orb clutter */
 .glow-orb {
   position: absolute;
@@ -134,7 +123,7 @@
   .nav-panel-detail { display: block; font-size: 0.8rem; font-weight: 400; color: #71717a; overflow-wrap: anywhere; }
 }
 
-/* ═══ HERO — two-column: copy left, screenshots right ═══ */
+/* ═══ HERO — two-column: copy left, the lotus right ═══ */
 .hero {
   flex: 1; padding-top: 92px; padding-bottom: 24px; position: relative; z-index: 5;
 }
@@ -192,11 +181,50 @@
 }
 .install-box-footer a { display: inline-flex; align-items: center; gap: 2px; color: var(--accent-primary); font-weight: 600; }
 
-/* ── Hero: buttons, and two real screenshots (VS Code, terminal app) ── */
+/* ── Hero: buttons ── */
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .hero-actions .btn { padding: 12px 22px; }
-.hero-shots { position: relative; flex: 1.25 1 0; min-width: 0; margin: 0; padding-bottom: 92px; }
-.hero-shots figcaption { position: absolute; left: 0; bottom: 0; max-width: 30%; font-size: 0.75rem; line-height: 1.45; color: var(--text-secondary); }
+
+/* ── Hero stage: the lotus, on the right with a soft glow (as before #23).
+   A still image shows at once; on wide screens without reduced motion the 3D
+   viewer (an iframe) loads after the page has painted and fades in over it. ── */
+.hero-stage {
+  position: relative;
+  flex: 1 1 0; min-width: 0;
+  margin: 0;
+  display: flex; justify-content: center;
+}
+.hero-stage-glow {
+  position: absolute; inset: -60px;
+  background: radial-gradient(circle at center, rgba(194,67,107,0.16), transparent 70%);
+  filter: blur(40px);
+  pointer-events: none; z-index: 0;
+}
+.splat-container {
+  position: relative; z-index: 1;
+  width: 100%;
+  height: clamp(340px, 38vw, 520px);
+  overflow: hidden;
+}
+/* The viewer frames the lotus by height, centred: the still is the same frame. */
+.lotus-still {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  height: 100%; width: auto; max-width: none;
+  pointer-events: none; user-select: none;
+  transition: opacity 0.6s ease;
+}
+.splat-iframe {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  border: none; background: transparent;
+  opacity: 0; transition: opacity 0.6s ease;
+}
+.splat-container.is-3d .splat-iframe { opacity: 1; }
+.splat-container.is-3d .lotus-still { opacity: 0; }
+/* Phones and reduced motion: the still image only (the iframe is never added). */
+@media (max-width: 767.98px), (prefers-reduced-motion: reduce) {
+  .splat-iframe { display: none; }
+  .splat-container.is-3d .lotus-still { opacity: 1; }
+}
 
 /* Features — borderless list (deliberately not a card grid, see gates/architecture) */
 .features-section { padding: 80px 0; position: relative; z-index: 5; }
@@ -252,7 +280,7 @@
   .hero-layout { flex-direction: column; gap: 40px; }
   .hero-copy { align-items: center; text-align: center; }
   .hero-sub { max-width: 600px; }
-  .hero-shots { width: 100%; max-width: 680px; }
+  .hero-stage { width: 100%; max-width: 620px; }
 }
 
 @media (max-width: 768px) {

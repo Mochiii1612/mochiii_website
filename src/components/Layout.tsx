@@ -93,8 +93,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="app-container">
-      {/* Background & single hero glow */}
-      <div className="grid-background" />
+      {/* Single hero glow */}
       <div className="glow-orb hero-orb" />
 
       <nav className="nav-float" ref={barRef} aria-label="Main">

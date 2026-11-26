@@ -29,10 +29,6 @@ body {
   color: var(--text-primary);
   line-height: 1.6;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(194,67,107, 0.035) 0%, transparent 40%),
-    radial-gradient(circle at 85% 30%, rgba(158,53,87, 0.025) 0%, transparent 40%);
-  background-attachment: fixed;
 }
 
 h1, h2, h3, h4, h5, h6 {

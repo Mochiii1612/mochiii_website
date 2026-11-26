@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useReveal } from '../hooks';
 import CopyCommand from '../components/CopyCommand';
+import HeroLotus from '../components/HeroLotus';
 import ProviderLogos from '../components/ProviderLogos';
 import {
   DOCS_URL,
@@ -25,10 +26,9 @@ import {
   NODE_REQUIREMENT,
   PLATFORMS,
   PROVIDERS,
+  VERSIONS,
   VSCODE_INSTALL_COMMAND,
 } from '../site.config';
-import heroVscode from '../assets/shots/hero-vscode.webp';
-import heroTerminal from '../assets/shots/hero-terminal.webp';
 import shotCodebase from '../assets/shots/feature-codebase.webp';
 import shotReview from '../assets/shots/feature-review.webp';
 import shotTasks from '../assets/shots/feature-tasks.webp';
@@ -50,7 +50,7 @@ const gates = [
   { label: 'Path safety', icon: <Lock size={22} />, body: 'Edits stay inside your workspace. Credential and startup files are refused.' },
   { label: 'Exact match', icon: <Eye size={22} />, body: 'A change must match exactly one place in the file, or it is rejected.' },
   { label: 'Syntax check', icon: <FileCode size={22} />, body: 'Go files are parsed. TypeScript, JavaScript and Python are checked for balance.' },
-  { label: 'Confirm', icon: <CheckCircle size={22} />, body: 'Approve each edit yourself, or let auto mode apply them with the rest of the checks.' },
+  { label: 'Confirm', icon: <CheckCircle size={22} />, body: 'In Manual and in the terminal app, each edit waits for you. Auto, and the terminal\'s /auto, apply it without asking.' },
   { label: 'Backup', icon: <Save size={22} />, body: 'Files are copied aside before they change, so a run can be undone.' },
 ];
 
@@ -169,23 +169,7 @@ export default function Home() {
             </div>
           </div>
 
-          <figure className="hero-shots">
-            <Shot
-              src={heroVscode}
-              w={1056}
-              h={832}
-              className="shot-vscode"
-              alt="Mochiii in VS Code: asked what checkout() returns, it answers beside the open checkout.js file."
-            />
-            <Shot
-              src={heroTerminal}
-              w={1100}
-              h={680}
-              className="shot-terminal"
-              alt="Mochiii's terminal app answering where an order total is worked out, and quoting the code it found in src/checkout.js."
-            />
-            <figcaption>Mochiii 1.6.0 with qwen2.5-coder:7b, a model running on the same computer.</figcaption>
-          </figure>
+          <HeroLotus />
         </div>
       </header>
 
@@ -221,7 +205,7 @@ export default function Home() {
 
       <FeatureBlock
         id="edits"
-        title="You review every edit"
+        title="Auto, Manual or Plan"
         flip
         shot={
           <Shot
@@ -233,12 +217,20 @@ export default function Home() {
         }
       >
         <p>
-          In the terminal app, each change shows up as a diff: apply or skip it, and an applied change can be undone in
-          one step.
+          In VS Code a new chat starts in <strong>Auto</strong>: full access inside the project. After a one-time
+          warning it edits files, runs commands and tests, installs the project's packages and uses local git without
+          asking. It still asks when it recognises going outside the project, sending something out (like{' '}
+          <code>git push</code>) or wiping data. Commands are not sandboxed and that check can miss some, so use Auto
+          only in projects you trust.
         </p>
         <p>
-          In VS Code a chat starts in <strong>auto</strong> mode: edits apply as they arrive, each still checked and
-          undoable. Switch it to <strong>manual</strong> and every edit waits for your Apply.
+          <strong>Manual</strong>: every edit waits for your Apply. <strong>Plan</strong>: Mochiii reads your code and
+          writes a plan, with no edits, no commands and no network.
+        </p>
+        <p>
+          In the terminal app, each change shows up as a diff: apply or skip it, and an applied change can be undone in
+          one step. <code>/auto</code> (or <code>ctrl+space</code>) says yes for you to almost everything until you turn
+          it off; it is off every time Mochiii starts.
         </p>
       </FeatureBlock>
 
@@ -301,9 +293,10 @@ export default function Home() {
       >
         <p>
           <strong>Agent mode.</strong> Mochiii can read files, search, run commands and tests, and look things up on the
-          web. Anything that changes a file or runs a command waits for your approval, and an answer that used the web
-          lists the pages it read. In the terminal app it is on with a provider's key, and a model on your computer gets
-          tools only after <code>/agent on</code>. In VS Code, auto mode applies edits as they arrive.
+          web, and an answer that used the web lists the pages it read. In the terminal app it is on with a provider's
+          key, and a model on your computer gets tools only after <code>/agent on</code>; a change to a file or a
+          command waits for your approval unless <code>/auto</code> is on. In VS Code, Auto works without asking inside
+          the project, and Manual asks first.
         </p>
         <p>
           <strong>MCP servers.</strong> <code>/mcp</code> opens a panel of your servers: paste the JSON from a server's
@@ -408,8 +401,8 @@ export default function Home() {
             {PLATFORMS.vscode} {PLATFORMS.note}
           </p>
           <p>
-            Using both? Keep them on the same version.{' '}
-            <a href={`${DOCS_URL}/troubleshooting`} className="inline-link">Why</a>
+            Using both? VS Code extension {VERSIONS.extension} works with terminal app {VERSIONS.terminal} or later.
+            Update the terminal app first.
           </p>
         </Reveal>
       </section>

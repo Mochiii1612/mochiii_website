@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { DOCS_URL, PROVIDERS, SUPPORT_EMAIL } from '../site.config';
+import { DOCS_URL, PROVIDERS, SUPPORT_EMAIL, VERSIONS } from '../site.config';
 import '../Support.css';
 
 interface Item {
@@ -81,10 +81,13 @@ const GROUPS: { title: string; items: Item[] }[] = [
         q: 'Does Mochiii change my files without asking?',
         a: (
           <>
-            In the terminal app, each edit is shown as a diff that you apply or skip, and anything that changes a file or
-            runs a command waits for your approval. In VS Code a new chat starts in <strong>auto</strong> mode: edits apply
-            as they arrive, each still checked and undoable. Switch a chat to <strong>manual</strong> to apply each edit
-            yourself, or to <strong>plan</strong> for a plan with no edits.
+            In VS Code, a new chat starts in <strong>Auto</strong>, which has full access inside the project: after a
+            one-time warning it edits files, runs commands and tests, installs the project's packages and uses local git
+            without asking. It still asks when it recognises going outside the project, sending something out or wiping
+            data. Commands are not sandboxed, so use Auto only in projects you trust. In <strong>Manual</strong> every
+            edit waits for your Apply, and <strong>Plan</strong> writes a plan with no edits, commands or network. In the
+            terminal app, each edit is shown as a diff that you apply or skip, and a command waits for your approval,
+            unless you turn on <code>/auto</code>; it is off every time Mochiii starts.
           </>
         ),
         docs: ['Approvals', '/using/approvals'],
@@ -104,9 +107,9 @@ const GROUPS: { title: string; items: Item[] }[] = [
         q: 'Why are my terminal and VS Code chats separate?',
         a: (
           <>
-            Since 1.6.0 the terminal app and VS Code each keep their own chat, saved chats and search, and each terminal
-            window has its own chat. The terminal app starts a new chat every time you launch it: <code>/save</code> a chat
-            to keep it and <code>/resume</code> to reopen it. Your code index, saved rules and spending limits are still
+            The terminal app (since 1.6.0) and the VS Code extension each keep their own chat, saved chats and search,
+            and each terminal window has its own chat. The terminal app starts a new chat every time you launch it:{' '}
+            <code>/save</code> a chat to keep it and <code>/resume</code> to reopen it. Your code index, saved rules and spending limits are still
             shared.
           </>
         ),
@@ -157,11 +160,21 @@ const GROUPS: { title: string; items: Item[] }[] = [
         a: (
           <>
             The terminal app and the VS Code extension keep chat memory in one file, and an older version can't use it once
-            a newer one has upgraded it. Update both, then run <code>mochiii -stop</code> in each folder you use the
-            terminal app in, and reload VS Code.
+            a newer one has upgraded it. VS Code extension {VERSIONS.extension} works with terminal app{' '}
+            {VERSIONS.terminal} or later: update the terminal app first, run <code>mochiii -stop</code> in each folder you
+            use it in, then reload VS Code.
           </>
         ),
         docs: ['Troubleshooting', '/troubleshooting'],
+      },
+      {
+        q: 'Installed a Mochiii .vsix by hand?',
+        a: (
+          <>
+            Uninstall it before installing from the Marketplace. VS Code will not replace a hand-installed build numbered
+            1.1.0 to 1.6.1 with {VERSIONS.extension}.
+          </>
+        ),
       },
       {
         q: 'Code search is off after I installed.',
