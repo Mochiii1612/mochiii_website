@@ -33,7 +33,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
             project folder.
           </>
         ),
-        docs: ['Install', '/getting-started/install'],
+        docs: ['Install in VS Code', '/getting-started/install-vscode'],
       },
       {
         q: 'Which systems does it run on?',
@@ -44,7 +44,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
             supported.
           </>
         ),
-        docs: ['Install', '/getting-started/install'],
+        docs: ['Install the terminal app', '/getting-started/install-terminal'],
       },
       {
         q: 'How do I connect a model?',
@@ -55,7 +55,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
             with <code>/provider</code> and <code>/model</code>.
           </>
         ),
-        docs: ['Connect a model', '/getting-started/connect-a-model'],
+        docs: ['Choosing a model', '/models/choosing-a-model'],
       },
       {
         q: 'Can I use a model on my own computer?',
@@ -66,7 +66,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
             use the <code>mochiii.apiBase</code> and <code>mochiii.model</code> settings.
           </>
         ),
-        docs: ['Connect a model', '/getting-started/connect-a-model'],
+        docs: ['Local models', '/models/local-models'],
       },
       {
         q: 'Is Mochiii open source?',
@@ -101,7 +101,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
             can: as a full agent, a compact agent, or for chat.
           </>
         ),
-        docs: ['Connect a model', '/getting-started/connect-a-model'],
+        docs: ['Local models', '/models/local-models'],
       },
       {
         q: 'Why are my terminal and VS Code chats separate?',
@@ -113,7 +113,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
             shared.
           </>
         ),
-        docs: ['Saved sessions', '/using/saved-sessions'],
+        docs: ['History and saved chats', '/using/history'],
       },
       {
         q: 'How do I start over, or shrink a long chat?',
@@ -122,7 +122,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
             <code>/clear</code> starts a new chat, and <code>/compact</code> shrinks a long one.
           </>
         ),
-        docs: ['Terminal commands', '/using/terminal-commands'],
+        docs: ['Commands', '/using/commands'],
       },
       {
         q: 'How do I add an MCP server?',
@@ -143,7 +143,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
             limits. When a session or a day reaches its limit, Mochiii stops and asks before going on.
           </>
         ),
-        docs: ['Terminal commands', '/using/terminal-commands'],
+        docs: ['Spending limits', '/features/spending-limits'],
       },
       {
         q: 'Can I attach files in VS Code?',
@@ -211,7 +211,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
       {
         q: 'The mochiii command is not found after I installed it.',
         a: <>Open a new terminal: the one you installed from may not find the new command yet.</>,
-        docs: ['Install', '/getting-started/install'],
+        docs: ['Install the terminal app', '/getting-started/install-terminal'],
       },
       {
         q: 'Where are the logs?',

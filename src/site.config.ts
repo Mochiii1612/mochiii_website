@@ -32,9 +32,9 @@ export const VSCODE_INSTALL_COMMAND = 'code --install-extension MochiiiAIAgent.m
  */
 export const SOCIAL_LINKS: ReadonlyArray<{ name: 'LinkedIn' | 'X' | 'Reddit' | 'Discord'; url: string }> = [
   { name: 'LinkedIn', url: '' },
-  { name: 'X', url: '' },
+  { name: 'X', url: 'https://x.com/mochiiiaiagent' },
   { name: 'Reddit', url: '' },
-  { name: 'Discord', url: '' },
+  { name: 'Discord', url: 'https://discord.gg/YZnSvp4xE' },
 ];
 
 export const PROVIDERS = [
