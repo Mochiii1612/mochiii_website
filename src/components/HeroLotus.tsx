@@ -1,44 +1,40 @@
-import { useEffect, useState } from 'react';
-import still452 from '../assets/lotus-still-452.webp';
-import still904 from '../assets/lotus-still-904.webp';
+import { useEffect, useRef, useState } from 'react';
+import still520 from '../assets/lotus-still-520.webp';
+import still1040 from '../assets/lotus-still-1040.webp';
 
-/** Narrower than this, or with reduced motion asked for, the 3D viewer is never downloaded. */
-const STILL_ONLY = '(max-width: 767.98px), (prefers-reduced-motion: reduce)';
+/** What the six petal labels say, also given to screen readers as a list. */
+const PETAL_LABELS = ['Knows your codebase', 'VS Code', 'Terminal app', 'Agent mode', 'Long tasks', 'MCP servers'];
 
 /**
- * The hero's lotus. A still image (a frame of the same 3D scene) shows at
- * once. On a wide screen without reduced motion, the 3D viewer is added only
- * after the page has loaded and painted, and fades in over the still once it
- * has drawn the lotus; until then, or if it fails, the still stays.
+ * The hero's lotus. A still image (a frame of the same 3D view) shows at
+ * once. The 3D viewer, with its labels and its slow turn, is added only after
+ * the page has loaded and the still has been drawn, on every screen size, and
+ * fades in over the still once it has drawn the lotus; until then, or if it
+ * fails, the still stays. With reduced motion asked for, the viewer does not
+ * turn.
  */
 export default function HeroLotus() {
   const [load3d, setLoad3d] = useState(false);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  const still = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    const stillOnly = window.matchMedia(STILL_ONLY);
-    let painted = false;
     let raf = 0;
-    const maybeLoad = () => {
-      if (painted && !stillOnly.matches) setLoad3d(true);
-    };
-    // Two frames after load: the page has painted with the still in place.
-    const afterPaint = () => {
+    let cancelled = false;
+    // React adds the still after the page's load event, so wait for both: the
+    // page loaded, and the still decoded; then two frames, so it is painted.
+    const pageLoaded = document.readyState === 'complete' ? Promise.resolve() : new Promise((r) => window.addEventListener('load', r, { once: true }));
+    const stillReady = still.current ? still.current.decode().catch(() => undefined) : Promise.resolve();
+    Promise.all([pageLoaded, stillReady]).then(() => {
+      if (cancelled) return;
       raf = requestAnimationFrame(() => {
-        raf = requestAnimationFrame(() => {
-          painted = true;
-          maybeLoad();
-        });
+        raf = requestAnimationFrame(() => setLoad3d(true));
       });
-    };
-    if (document.readyState === 'complete') afterPaint();
-    else window.addEventListener('load', afterPaint, { once: true });
-    stillOnly.addEventListener('change', maybeLoad);
+    });
     return () => {
+      cancelled = true;
       cancelAnimationFrame(raf);
-      window.removeEventListener('load', afterPaint);
-      stillOnly.removeEventListener('change', maybeLoad);
     };
   }, []);
 
@@ -60,11 +56,12 @@ export default function HeroLotus() {
       <div className="hero-stage-glow" aria-hidden="true" />
       <div className={`splat-container${ready && !failed ? ' is-3d' : ''}`}>
         <img
+          ref={still}
           className="lotus-still"
-          src={still452}
-          srcSet={`${still452} 452w, ${still904} 904w`}
-          sizes="(max-width: 894px) 296px, (max-width: 1368px) 33vw, 452px"
-          width={452}
+          src={still520}
+          srcSet={`${still520} 520w, ${still1040} 1040w`}
+          sizes="(max-width: 767.98px) 340px, 520px"
+          width={520}
           height={520}
           alt=""
           fetchPriority="high"
@@ -80,6 +77,11 @@ export default function HeroLotus() {
           />
         )}
       </div>
+      <ul className="visually-hidden">
+        {PETAL_LABELS.map((label) => (
+          <li key={label}>{label}</li>
+        ))}
+      </ul>
     </div>
   );
 }
