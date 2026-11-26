@@ -186,8 +186,8 @@
 .hero-actions .btn { padding: 12px 22px; }
 
 /* ── Hero stage: the lotus, on the right with a soft glow (as before #23).
-   A still image shows at once; on wide screens without reduced motion the 3D
-   viewer (an iframe) loads after the page has painted and fades in over it. ── */
+   A still image shows at once; the 3D viewer (an iframe, on every screen
+   size) loads after the page has painted and fades in over it. ── */
 .hero-stage {
   position: relative;
   flex: 1 1 0; min-width: 0;
@@ -206,10 +206,11 @@
   height: clamp(340px, 38vw, 520px);
   overflow: hidden;
 }
-/* The viewer frames the lotus by height, centred: the still is the same frame. */
+/* The viewer frames the lotus in a centred square as wide as the frame's
+   shorter side (public/spz-viewer/lotus.js); the still is that square. */
 .lotus-still {
-  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  height: 100%; width: auto; max-width: none;
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; object-position: center;
   pointer-events: none; user-select: none;
   transition: opacity 0.6s ease;
 }
@@ -220,10 +221,10 @@
 }
 .splat-container.is-3d .splat-iframe { opacity: 1; }
 .splat-container.is-3d .lotus-still { opacity: 0; }
-/* Phones and reduced motion: the still image only (the iframe is never added). */
-@media (max-width: 767.98px), (prefers-reduced-motion: reduce) {
-  .splat-iframe { display: none; }
-  .splat-container.is-3d .lotus-still { opacity: 1; }
+/* Read by screen readers, not shown (the lotus labels). */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
 }
 
 /* Features — borderless list (deliberately not a card grid, see gates/architecture) */
