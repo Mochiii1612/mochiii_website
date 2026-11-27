@@ -74,14 +74,14 @@ export default function Support() {
           </div>
           <h2 id="support-security">Report a security issue</h2>
           <p>
-            Email <Email to={SECURITY_EMAIL} />, not the support address, and don't post it anywhere public. Include:
+            Email <Email to={SECURITY_EMAIL} />, not the support address. Include:
           </p>
           <div className="checklist">
             <ul>
               <li>What the problem is</li>
               <li>Steps to reproduce it</li>
               <li>What it exposes, or what it lets someone do</li>
-              <li>Any proof-of-concept code (please don't publish it)</li>
+              <li>Any proof-of-concept code</li>
             </ul>
           </div>
           <p className="text-secondary">We treat security reports as a priority.</p>
